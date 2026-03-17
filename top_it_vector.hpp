@@ -1,6 +1,7 @@
 #ifndef TOP_IT_VECTOR_HPP
 #define TOP_IT_VECTOR_HPP
 
+#include <algorithm>
 #include <cstddef>
 
 namespace topit
@@ -11,7 +12,28 @@ namespace topit
     ~Vector();
     Vector() noexcept;
 
+    Vector(const Vector &vec);
+    Vector(Vector &&vec) noexcept;
+
+    Vector &operator=(const Vector &vec);
+    Vector &operator=(Vector &&vec) noexcept;
+
+    // Сделать
     bool isEmpty() const noexcept;
+    size_t getSize() const noexcept;
+    size_t getCapacity() const noexcept;
+
+    // Сделать pushBack
+    void pushBack(const T &val);
+
+    // Сделать popBack
+    void popBack(const T &val);
+
+    // Сделать insert
+    void insert(size_t i, const T &val);
+
+    // Сделать erase
+    void erase(size_t i);
 
   private:
     T *data_;
@@ -30,6 +52,10 @@ namespace topit
   template <class T> bool Vector<T>::isEmpty() const noexcept
   {
     return size_ == 0;
+  }
+
+  template <class T> void Vector<T>::pushBack(const T &val)
+  {
   }
 }
 
