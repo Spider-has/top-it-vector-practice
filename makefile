@@ -1,2 +1,4 @@
-main: main.cpp
-	g++ -Wall -Wextra -std=c++14 main.cpp -o out/$@
+CXXFLAGS += -Wall -Wextra -std=c++14
+
+main: main.o
+	$(CXX) $^ -o out/$@
