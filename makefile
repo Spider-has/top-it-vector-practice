@@ -1,2 +1,2 @@
 main: main.cpp
-	g++ -Wall -Wextra -std=c++14 main.cpp -o out/main
+	g++ -Wall -Wextra -std=c++14 main.cpp -o out/$@
