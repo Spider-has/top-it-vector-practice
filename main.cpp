@@ -1,12 +1,11 @@
-#include <iomanip>
-#include <ios>
 #include <iostream>
 
 #include "top_it_vector.hpp"
 
 bool testEmptyVector()
 {
-  return false;
+  topit::Vector<int> v;
+  return v.isEmpty();
 }
 
 int main()
