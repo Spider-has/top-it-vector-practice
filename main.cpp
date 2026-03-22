@@ -27,6 +27,20 @@ bool testInsert()
   return v.getSize() == 3 && v[0] == 2 && v[1] == 1 && v[2] == 3;
 }
 
+bool testPopBack()
+{
+  topit::Vector<int> v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(3);
+
+  v.popBack();
+  v.popBack();
+  v.popBack();
+
+  return v.getSize() == 0 && v.isEmpty() && v.getCapacity() > 0;
+}
+
 int main()
 {
   using f_p = std::pair<const char *, bool (*)()>;
