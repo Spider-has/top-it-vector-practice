@@ -39,9 +39,13 @@ bool testInsert()
 bool testPopBack()
 {
   topit::Vector<int> v;
-  v.pushBack(1);
-  v.pushBack(2);
-  v.pushBack(3);
+  v.pushBack(20);
+  v.pushBack(10);
+  v.pushBack(30);
+
+  assert(v[0] == 20 && "v[0] != 20");
+  assert(v[1] == 10 && "v[1] != 10");
+  assert(v[2] == 30 && "v[2] != 30");
 
   v.popBack();
   v.popBack();
@@ -58,6 +62,12 @@ bool testCapacityChanging()
   v.pushBack(3);
   v.pushBack(4);
   v.pushBack(5);
+
+  assert(v[0] == 1 && "v[0] != 1");
+  assert(v[1] == 2 && "v[1] != 2");
+  assert(v[2] == 3 && "v[2] != 3");
+  assert(v[3] == 4 && "v[1] != 4");
+  assert(v[4] == 5 && "v[2] != 5");
 
   return v.getSize() == 5 && !v.isEmpty() && v.getCapacity() == 8;
 }
