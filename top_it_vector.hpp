@@ -2,7 +2,7 @@
 #define TOP_IT_VECTOR_HPP
 
 #include <cstddef>
-#include <iostream>
+#include <stdexcept>
 
 namespace topit
 {
@@ -20,21 +20,16 @@ namespace topit
 
     T &operator[](size_t index);
 
-    // Сделать
     bool isEmpty() const noexcept;
     size_t getSize() const noexcept;
     size_t getCapacity() const noexcept;
 
-    // Сделать pushBack
     void pushBack(const T &val);
 
-    // Сделать popBack
     void popBack();
 
-    // Сделать insert
     void insert(size_t i, const T &val);
 
-    // Сделать erase
     void erase(size_t i);
 
   private:
@@ -107,6 +102,11 @@ namespace topit
 
   template <class T> void Vector<T>::popBack()
   {
+    if (!size_)
+    {
+      throw std::runtime_error("can't pop back, vector size is already zero");
+    }
+    --size_;
   }
 
   template <class T> void Vector<T>::insert(size_t i, const T &val)
@@ -116,8 +116,7 @@ namespace topit
 
   template <class T> T &Vector<T>::operator[](size_t index)
   {
-    std::cout << index << "\n";
-    return *(new T());
+    return data_[index];
   }
 }
 

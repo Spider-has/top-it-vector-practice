@@ -20,7 +20,11 @@ bool testPushBack()
   v.pushBack(3);
   assert(v.getCapacity() == 4 && "capacity != 4");
 
-  return v.getSize() == 3 && !v.isEmpty() && v.getCapacity() == 4;
+  assert(v[0] == 1 && "v[0] != 1");
+  assert(v[1] == 2 && "v[1] != 2");
+  assert(v[2] == 3 && "v[2] != 3");
+
+  return v.getSize() == 3 && !v.isEmpty() && v.getCapacity() == 4 && v[0] == 1 && v[1] == 2 && v[2] == 3;
 }
 
 bool testInsert()
