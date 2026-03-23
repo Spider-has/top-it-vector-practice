@@ -38,6 +38,8 @@ namespace topit
     void erase(size_t i);
 
   private:
+    static T *createCopy(T *start, T *end, size_t cap);
+
     T *data_;
     size_t size_, cap_;
   };
@@ -58,17 +60,49 @@ namespace topit
 
   template <class T> size_t Vector<T>::getSize() const noexcept
   {
-    return -1;
+    return size_;
   }
 
   template <class T> size_t Vector<T>::getCapacity() const noexcept
   {
-    return -1;
+    return cap_;
+  }
+
+  template <class T> T *Vector<T>::createCopy(T *start, T *end, size_t cap)
+  {
+    T *new_data = new T[cap];
+    try
+    {
+      size_t i = 0;
+      for (; start != end; ++start, ++i)
+      {
+        new_data[i] = *start;
+      }
+    }
+    catch (...)
+    {
+      delete[] new_data;
+      throw;
+    }
+    return new_data;
   }
 
   template <class T> void Vector<T>::pushBack(const T &val)
   {
-    std::cout << val << "\n";
+    if (size_ >= cap_)
+    {
+      size_t new_cap = cap_ ? cap_ * 2 : 1;
+      T *new_arr = createCopy(data_, data_ + size_, new_cap);
+      new_arr[size_] = val;
+      cap_ = new_cap;
+      delete[] data_;
+      data_ = new_arr;
+    }
+    else
+    {
+      data_[size_] = val;
+    }
+    size_++;
   }
 
   template <class T> void Vector<T>::popBack()

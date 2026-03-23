@@ -1,3 +1,4 @@
+#include <cassert>
 #include <ios>
 #include <iostream>
 
@@ -13,8 +14,11 @@ bool testPushBack()
 {
   topit::Vector<int> v;
   v.pushBack(1);
+  assert(v.getSize() == 1 && "size != 1");
   v.pushBack(2);
+  assert(v.getSize() == 2 && "size != 2");
   v.pushBack(3);
+  assert(v.getCapacity() == 4 && "capacity != 4");
 
   return v.getSize() == 3 && !v.isEmpty() && v.getCapacity() == 4;
 }
@@ -69,7 +73,9 @@ int main()
   size_t success = 0;
   for (size_t i = 0; i < count; ++i)
   {
-    std::cout << tests[i].first << ": " << (success += tests[i].second()) << "\n";
+    bool res = tests[i].second();
+    std::cout << tests[i].first << ": " << res << "\n";
+    success += res;
   }
   std::cout << "\ntests passed: " << success << " / " << count << "\n";
 }
