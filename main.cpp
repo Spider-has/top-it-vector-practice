@@ -89,6 +89,41 @@ bool testElementOutofboundAccess()
   }
 }
 
+bool testElementInboundConstAccess()
+{
+  topit::Vector<int> v;
+  v.pushBack(1);
+  const topit::Vector<int> &c_v = v;
+  try
+  {
+    const int &val = c_v.at(0);
+    return val == 1;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testElementOutofboundConstAccess()
+{
+  topit::Vector<int> v;
+  const topit::Vector<int> &c_v = v;
+  try
+  {
+    c_v.at(0);
+    return false;
+  }
+  catch (const std::out_of_range &e)
+  {
+    return true;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
 bool testCapacityChanging()
 {
   topit::Vector<int> v;
