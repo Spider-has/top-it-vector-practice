@@ -12,11 +12,11 @@ namespace topit
     ~Vector();
     Vector() noexcept;
 
-    Vector(const Vector &vec);
-    Vector(Vector &&vec) noexcept;
+    Vector(const Vector<T> &vec);
+    Vector(Vector<T> &&vec) noexcept;
 
-    Vector &operator=(const Vector &vec);
-    Vector &operator=(Vector &&vec) noexcept;
+    Vector<T> &operator=(const Vector<T> &vec);
+    Vector<T> &operator=(Vector<T> &&vec) noexcept;
 
     T &operator[](size_t index) noexcept;
     const T &operator[](size_t index) const noexcept;
@@ -50,6 +50,25 @@ namespace topit
 
   template <class T> Vector<T>::Vector() noexcept : data_(nullptr), size_(0), cap_(0)
   {
+  }
+
+  template <class T>
+  Vector<T>::Vector(const Vector<T> &rhs)
+      : data_(rhs.getSize() ? new T[rhs.getSize()] : nullptr), size_(0), cap_(rhs.getSize())
+  {
+    try
+    {
+      for (size_t i = 0; i < rhs.getSize(); ++i)
+      {
+        data_[i] = rhs[i];
+        ++size_;
+      }
+    }
+    catch (...)
+    {
+      delete[] data_;
+      throw;
+    }
   }
 
   template <class T> bool Vector<T>::isEmpty() const noexcept
@@ -143,6 +162,14 @@ namespace topit
       return data_[id];
     }
     throw std::out_of_range("can't get element out of range");
+  }
+  template <class T> bool operator==(const Vector<T> lhs, const Vector<T> &rhs) noexcept
+  {
+    bool isEqual = lhs.getSize() == rhs.getSize();
+    for (size_t i = 0; i < lhs.getSize() && (isEqual = isEqual && lhs[i] == rhs[i]); ++i)
+    {
+    }
+    return isEqual;
   }
 }
 
