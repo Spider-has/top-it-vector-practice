@@ -2,6 +2,7 @@
 #include <ios>
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 
 #include "top_it_vector.hpp"
 
@@ -225,6 +226,50 @@ bool testOperatorAssign()
   return v2 == v1;
 }
 
+bool testMoveConstructor()
+{
+  topit::Vector<int> v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+
+  topit::Vector<int> v2{std::move(v1)};
+
+  try
+  {
+    v1.at(0);
+    return false;
+  }
+  catch (...)
+  {
+  }
+
+  return v1.getSize() == 0 && v1.isEmpty() && v2.getSize() == 3;
+}
+
+bool testMoveAssign()
+{
+  topit::Vector<int> v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+
+  topit::Vector<int> v2;
+
+  v2 = std::move(v1);
+
+  try
+  {
+    v1.at(0);
+    return false;
+  }
+  catch (...)
+  {
+  }
+
+  return v1.getSize() == 0 && v1.isEmpty() && v2.getSize() == 3;
+}
+
 int main()
 {
   using f_p = std::pair<const char *, bool (*)()>;
@@ -242,7 +287,8 @@ int main()
                  {"not equal diff elements vectors", testNotEqualVectorsDiffElemetnts},
                  {"equal copy constructor vector", testEqualVectorsWithCopyConstuctor},
                  {"equal vectors", testEqualVectors},
-                 {"assing operator", testOperatorAssign}};
+                 {"assing operator", testOperatorAssign},
+                 {"move constructor", testMoveConstructor}};
 
   const size_t count = sizeof(tests) / sizeof(f_p);
   std::cout << std::boolalpha;
