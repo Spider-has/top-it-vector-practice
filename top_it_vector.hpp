@@ -2,7 +2,9 @@
 #define TOP_IT_VECTOR_HPP
 
 #include <cstddef>
+#include <memory>
 #include <stdexcept>
+#include <utility>
 
 namespace topit
 {
@@ -38,6 +40,10 @@ namespace topit
     void insert(size_t i, const T &val);
 
     void erase(size_t i);
+
+    void swap(Vector<T> &rhs) noexcept;
+
+    void changeVectorInSomeWay();
 
   private:
     static T *createCopy(T *start, T *end, size_t cap);
@@ -88,6 +94,38 @@ namespace topit
   template <class T> size_t Vector<T>::getCapacity() const noexcept
   {
     return cap_;
+  }
+
+  template <class T> void Vector<T>::swap(Vector<T> &rhs) noexcept
+  {
+    std::swap(data_, rhs.data_);
+    std::swap(size_, rhs.size_);
+    std::swap(cap_, rhs.cap_);
+  }
+
+  template <class T> Vector<T> &Vector<T>::operator=(const Vector<T> &rhs)
+  {
+    if (this == std::addressof(rhs))
+    {
+      return *this;
+    }
+    Vector<T> cpy{rhs};
+    swap(cpy);
+    return *this;
+  }
+
+  // Пример использования copy and swap
+  template <class T> void Vector<T>::changeVectorInSomeWay()
+  {
+    Vector<T> cpy(*this);
+    cpy.pushBack(1);
+    cpy.pushBack(1);
+    cpy.pushBack(1);
+    cpy.pushBack(1);
+    cpy.pushBack(1);
+    cpy.pushBack(1);
+    cpy.pushBack(1);
+    swap(cpy); //  SWAAAAAP NOOOOEXXCEEPT!!!!!!
   }
 
   template <class T> T *Vector<T>::createCopy(T *start, T *end, size_t cap)
