@@ -6,6 +6,10 @@
 #include <stdexcept>
 #include <utility>
 
+// TODO:: ТЕсты для copy move
+// TODO:: Insert и erase
+// TODO:: + для диапазона значений из другого вектора
+// TODO:: Все тесты на все новые методы + соблюдаем строгую гарантию
 namespace topit
 {
   template <class T> struct Vector
@@ -15,13 +19,13 @@ namespace topit
     Vector() noexcept;
 
     Vector(const Vector<T> &rhs);
-    Vector(Vector<T> &&vec) noexcept;
+    Vector(Vector<T> &&rhs) noexcept;
     Vector(size_t size, const T &init);
 
     explicit Vector(size_t size);
 
     Vector<T> &operator=(const Vector<T> &rhs);
-    Vector<T> &operator=(Vector<T> &&vec) noexcept;
+    Vector<T> &operator=(Vector<T> &&rhs) noexcept;
 
     T &operator[](size_t index) noexcept;
     const T &operator[](size_t index) const noexcept;
