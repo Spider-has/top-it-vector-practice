@@ -6,10 +6,16 @@
 #include <stdexcept>
 #include <utility>
 
+// to practice
 // TODO:: ТЕсты для copy move
 // TODO:: Insert и erase
 // TODO:: + для диапазона значений из другого вектора
 // TODO:: Все тесты на все новые методы + соблюдаем строгую гарантию
+
+// homework
+// TODO:: random access iters для вектора
+// TODO:: insert erase with iterators по 3 штуки
+// TODO:: + тесты
 namespace topit
 {
   template <class T> struct Vector
@@ -48,6 +54,12 @@ namespace topit
     void swap(Vector<T> &rhs) noexcept;
 
     void changeVectorInSomeWay();
+
+    // example
+    struct VectorIterator
+    {
+    };
+    template <class FwdIterator> void insert(VectorIterator pos, FwdIterator begin, FwdIterator end);
 
   private:
     static T *createCopy(T *start, T *end, size_t cap);
@@ -130,7 +142,9 @@ namespace topit
     {
       return *this;
     }
-    swap(rhs);
+    // cpy тут для того, чтобы гарантированно удалить то, что было в this
+    Vector<T> cpy{rhs};
+    swap(cpy);
     return *this;
   }
 
