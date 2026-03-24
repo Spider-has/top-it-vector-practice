@@ -148,6 +148,14 @@ bool testCopyConstructor()
   return v == yav;
 }
 
+bool testCopyConstructorNonEmpty()
+{
+  topit::Vector<int> v;
+  v.pushBack(1);
+  topit::Vector<int> yav{v};
+  return v == yav;
+}
+
 bool testNotEqualVectorsDiffSize()
 {
   topit::Vector<int> v1;
@@ -208,6 +216,7 @@ int main()
                  {"const element inbound access", testElementInboundConstAccess},
                  {"const element out of bound access", testElementOutofboundConstAccess},
                  {"copy constructor test", testCopyConstructor},
+                 {"copy construtcot not empty", testCopyConstructorNonEmpty},
                  {"not equal diff size vectors", testNotEqualVectorsDiffSize},
                  {"not equal diff elements vectors", testNotEqualVectorsDiffElemetnts},
                  {"equal copy constructor vector", testEqualVectorsWithCopyConstuctor},
