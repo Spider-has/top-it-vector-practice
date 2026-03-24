@@ -7,3 +7,7 @@ main: main.o
 
 run: out/main
 	./$^
+
+clean: 
+	-@$(RM) main.d main.o
+	-@$(RM) out/main
