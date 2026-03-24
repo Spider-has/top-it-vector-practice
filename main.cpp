@@ -212,6 +212,19 @@ bool testEqualVectors()
   return v1 == v2;
 }
 
+bool testOperatorAssign()
+{
+  topit::Vector<int> v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+
+  topit::Vector<int> v2;
+  v2.pushBack(1);
+  v2 = v1;
+  return v2 == v1;
+}
+
 int main()
 {
   using f_p = std::pair<const char *, bool (*)()>;
@@ -228,7 +241,8 @@ int main()
                  {"not equal diff size vectors", testNotEqualVectorsDiffSize},
                  {"not equal diff elements vectors", testNotEqualVectorsDiffElemetnts},
                  {"equal copy constructor vector", testEqualVectorsWithCopyConstuctor},
-                 {"equal vectors", testEqualVectors}};
+                 {"equal vectors", testEqualVectors},
+                 {"assing operator", testOperatorAssign}};
 
   const size_t count = sizeof(tests) / sizeof(f_p);
   std::cout << std::boolalpha;
