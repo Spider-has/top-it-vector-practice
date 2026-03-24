@@ -163,6 +163,7 @@ namespace topit
     }
     throw std::out_of_range("can't get element out of range");
   }
+
   template <class T> bool operator==(const Vector<T> lhs, const Vector<T> &rhs) noexcept
   {
     bool isEqual = lhs.getSize() == rhs.getSize();
@@ -170,6 +171,11 @@ namespace topit
     {
     }
     return isEqual;
+  }
+
+  template <class T> bool operator!=(const Vector<T> lhs, const Vector<T> &rhs) noexcept
+  {
+    return !(lhs == rhs);
   }
 }
 
