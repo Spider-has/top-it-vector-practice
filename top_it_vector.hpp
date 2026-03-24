@@ -18,7 +18,11 @@ namespace topit
     Vector &operator=(const Vector &vec);
     Vector &operator=(Vector &&vec) noexcept;
 
-    T &operator[](size_t index);
+    T &operator[](size_t index) noexcept;
+    const T &operator[](size_t index) const noexcept;
+
+    T &at(size_t id);
+    const T &at(size_t id) const;
 
     bool isEmpty() const noexcept;
     size_t getSize() const noexcept;
@@ -114,9 +118,31 @@ namespace topit
     std::cout << i << " " << val << "\n";
   }
 
-  template <class T> T &Vector<T>::operator[](size_t index)
+  template <class T> T &Vector<T>::operator[](size_t index) noexcept
   {
+    const Vector<T> *cthis = this;
+    return const_cast<T &>((*cthis)[index]);
+  }
+
+  template <class T> const T &Vector<T>::operator[](size_t index) const noexcept
+  {
+
     return data_[index];
+  }
+
+  template <class T> T &Vector<T>::at(size_t id)
+  {
+    const Vector<T> *cthis = this;
+    return const_cast<T &>(cthis->at(id));
+  }
+
+  template <class T> const T &Vector<T>::at(size_t id) const
+  {
+    if (id < getSize())
+    {
+      return data_[id];
+    }
+    throw std::out_of_range("can't get element out of range");
   }
 }
 
