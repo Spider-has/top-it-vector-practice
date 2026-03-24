@@ -20,7 +20,7 @@ namespace topit
 
     explicit Vector(size_t size);
 
-    Vector<T> &operator=(const Vector<T> &vec);
+    Vector<T> &operator=(const Vector<T> &rhs);
     Vector<T> &operator=(Vector<T> &&vec) noexcept;
 
     T &operator[](size_t index) noexcept;
@@ -59,6 +59,12 @@ namespace topit
 
   template <class T> Vector<T>::Vector() noexcept : data_(nullptr), size_(0), cap_(0)
   {
+  }
+
+  template <class T> Vector<T>::Vector(Vector<T> &&rhs) noexcept : data_(rhs.data_), size_(rhs.size_), cap_(rhs.cap_)
+  {
+    rhs.data_ = nullptr;
+    rhs.size_ = 0;
   }
 
   template <class T> Vector<T>::Vector(const Vector<T> &rhs) : Vector(rhs.size_)
@@ -111,6 +117,16 @@ namespace topit
     }
     Vector<T> cpy{rhs};
     swap(cpy);
+    return *this;
+  }
+
+  template <class T> Vector<T> &Vector<T>::operator=(Vector<T> &&rhs) noexcept
+  {
+    if (this == std::addressof(rhs))
+    {
+      return *this;
+    }
+    swap(rhs);
     return *this;
   }
 
