@@ -12,6 +12,7 @@ bool testEmptyVector()
 
 bool testPushBack()
 {
+  // std::cout << __func__ << "\n";
   topit::Vector<int> v;
   v.pushBack(1);
   assert(v.getSize() == 1 && "size != 1");
@@ -88,8 +89,13 @@ int main()
   for (size_t i = 0; i < count; ++i)
   {
     bool res = tests[i].second();
-    std::cout << tests[i].first << ": " << res << "\n";
+    if (!res)
+    {
+      std::cout << tests[i].first << ": " << res << "\n";
+    }
     success += res;
   }
+  // Подсчет пройденных/непройденных тестов
+  // Вывод только пройденных тестов
   std::cout << "\ntests passed: " << success << " / " << count << "\n";
 }
