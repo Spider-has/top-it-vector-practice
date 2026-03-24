@@ -1,6 +1,7 @@
 #include <cassert>
 #include <ios>
 #include <iostream>
+#include <stdexcept>
 
 #include "top_it_vector.hpp"
 
@@ -55,6 +56,39 @@ bool testPopBack()
   return v.getSize() == 0 && v.isEmpty() && v.getCapacity() > 0;
 }
 
+bool testElementInboundAccess()
+{
+  topit::Vector<int> v;
+  v.pushBack(1);
+  try
+  {
+    int &val = v.at(0);
+    return val == 1;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testElementOutofboundAccess()
+{
+  topit::Vector<int> v;
+  try
+  {
+    v.at(0);
+    return false;
+  }
+  catch (const std::out_of_range &e)
+  {
+    return true;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
 bool testCapacityChanging()
 {
   topit::Vector<int> v;
@@ -76,12 +110,12 @@ bool testCapacityChanging()
 int main()
 {
   using f_p = std::pair<const char *, bool (*)()>;
-  f_p tests[] = {
-      {"empty vector test", testEmptyVector},
-      {"push back vector check", testPushBack},
-      {"pop back method check", testPopBack},
-      {"capacity method check", testCapacityChanging},
-  };
+  f_p tests[] = {{"empty vector test", testEmptyVector},
+                 {"push back vector check", testPushBack},
+                 {"pop back method check", testPopBack},
+                 {"capacity method check", testCapacityChanging},
+                 {"element inbound access", testElementInboundAccess},
+                 {"element out of bound access", testElementOutofboundAccess}};
 
   const size_t count = sizeof(tests) / sizeof(f_p);
   std::cout << std::boolalpha;
@@ -95,7 +129,7 @@ int main()
     }
     success += res;
   }
-  // Подсчет пройденных/непройденных тестов
-  // Вывод только пройденных тестов
+  // TODO: Подсчет пройденных/непройденных тестов
+  // TODO: Вывод только пройденных тестов
   std::cout << "\ntests passed: " << success << " / " << count << "\n";
 }
