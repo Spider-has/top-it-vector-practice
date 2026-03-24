@@ -144,8 +144,56 @@ bool testCapacityChanging()
 bool testCopyConstructor()
 {
   topit::Vector<int> v;
-  topit::Vector<int> yav = v;
+  topit::Vector<int> yav{v};
   return v == yav;
+}
+
+bool testNotEqualVectorsDiffSize()
+{
+  topit::Vector<int> v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  v1.pushBack(4);
+  topit::Vector<int> v2{v1};
+  v2.popBack();
+  return !(v1 == v2);
+}
+
+bool testNotEqualVectorsDiffElemetnts()
+{
+  topit::Vector<int> v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  v1.pushBack(4);
+  topit::Vector<int> v2{v1};
+  v2[2] = 5;
+  return !(v1 == v2);
+}
+
+bool testEqualVectorsWithCopyConstuctor()
+{
+  topit::Vector<int> v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  v1.pushBack(4);
+  topit::Vector<int> v2{v1};
+  return v1 == v2;
+}
+
+bool testEqualVectors()
+{
+  topit::Vector<int> v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  topit::Vector<int> v2;
+  v2.pushBack(1);
+  v2.pushBack(2);
+  v2.pushBack(3);
+  return v1 == v2;
 }
 
 int main()
@@ -159,7 +207,11 @@ int main()
                  {"element out of bound access", testElementOutofboundAccess},
                  {"const element inbound access", testElementInboundConstAccess},
                  {"const element out of bound access", testElementOutofboundConstAccess},
-                 {"copy constructor test", testCopyConstructor}};
+                 {"copy constructor test", testCopyConstructor},
+                 {"not equal diff size vectors", testNotEqualVectorsDiffSize},
+                 {"not equal diff elements vectors", testNotEqualVectorsDiffElemetnts},
+                 {"equal copy constructor vector", testEqualVectorsWithCopyConstuctor},
+                 {"equal vectors", testEqualVectors}};
 
   const size_t count = sizeof(tests) / sizeof(f_p);
   std::cout << std::boolalpha;
