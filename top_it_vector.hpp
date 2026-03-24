@@ -12,8 +12,11 @@ namespace topit
     ~Vector();
     Vector() noexcept;
 
-    Vector(const Vector<T> &vec);
+    Vector(const Vector<T> &rhs);
     Vector(Vector<T> &&vec) noexcept;
+    Vector(size_t size, const T &init);
+
+    explicit Vector(size_t size);
 
     Vector<T> &operator=(const Vector<T> &vec);
     Vector<T> &operator=(Vector<T> &&vec) noexcept;
@@ -52,23 +55,24 @@ namespace topit
   {
   }
 
-  template <class T>
-  Vector<T>::Vector(const Vector<T> &rhs)
-      : data_(rhs.getSize() ? new T[rhs.getSize()] : nullptr), size_(0), cap_(rhs.getSize())
+  template <class T> Vector<T>::Vector(const Vector<T> &rhs) : Vector(rhs.size_)
   {
-    try
+    for (size_t i = 0; i < rhs.getSize(); ++i)
     {
-      for (size_t i = 0; i < rhs.getSize(); ++i)
-      {
-        data_[i] = rhs[i];
-        ++size_;
-      }
+      data_[i] = rhs[i];
     }
-    catch (...)
+  }
+
+  template <class T> Vector<T>::Vector(size_t size, const T &init) : Vector(size)
+  {
+    for (size_t i = 0; i < size; ++i)
     {
-      delete[] data_;
-      throw;
+      data_[i] = init;
     }
+  }
+
+  template <class T> Vector<T>::Vector(size_t size) : data_(size ? new T[size] : nullptr), size_(size), cap_((size))
+  {
   }
 
   template <class T> bool Vector<T>::isEmpty() const noexcept
