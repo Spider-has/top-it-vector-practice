@@ -107,11 +107,10 @@ bool testElementInboundConstAccess()
 
 bool testElementOutofboundConstAccess()
 {
-  topit::Vector<int> v;
-  const topit::Vector<int> &c_v = v;
+  const topit::Vector<int> v;
   try
   {
-    c_v.at(0);
+    v.at(0);
     return false;
   }
   catch (const std::out_of_range &e)
