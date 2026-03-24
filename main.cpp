@@ -141,6 +141,13 @@ bool testCapacityChanging()
   return v.getSize() == 5 && !v.isEmpty() && v.getCapacity() == 8;
 }
 
+bool testCopyConstructor()
+{
+  topit::Vector<int> v;
+  topit::Vector<int> yav = v;
+  return v == yav;
+}
+
 int main()
 {
   using f_p = std::pair<const char *, bool (*)()>;
@@ -149,7 +156,10 @@ int main()
                  {"pop back method check", testPopBack},
                  {"capacity method check", testCapacityChanging},
                  {"element inbound access", testElementInboundAccess},
-                 {"element out of bound access", testElementOutofboundAccess}};
+                 {"element out of bound access", testElementOutofboundAccess},
+                 {"const element inbound access", testElementInboundConstAccess},
+                 {"const element out of bound access", testElementOutofboundConstAccess},
+                 {"copy constructor test", testCopyConstructor}};
 
   const size_t count = sizeof(tests) / sizeof(f_p);
   std::cout << std::boolalpha;
