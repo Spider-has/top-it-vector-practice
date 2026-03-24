@@ -165,7 +165,7 @@ bool testNotEqualVectorsDiffSize()
   v1.pushBack(4);
   topit::Vector<int> v2{v1};
   v2.popBack();
-  return !(v1 == v2);
+  return v1 != v2;
 }
 
 bool testNotEqualVectorsDiffElemetnts()
@@ -177,7 +177,7 @@ bool testNotEqualVectorsDiffElemetnts()
   v1.pushBack(4);
   topit::Vector<int> v2{v1};
   v2[2] = 5;
-  return !(v1 == v2);
+  return v1 != v2;
 }
 
 bool testEqualVectorsWithCopyConstuctor()
