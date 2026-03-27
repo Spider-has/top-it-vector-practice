@@ -399,6 +399,142 @@ bool testEraseEnd()
   }
 }
 
+bool testInsertRange()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  topit::Vector< int > v2;
+  v2.pushBack(1);
+  v2.pushBack(4);
+  try
+  {
+    v2.insert(1, v1, 1, 3);
+    bool correct = true;
+    for (size_t i = 0; i < v2.getSize() && correct; ++i)
+    {
+      correct = v2[i] == (i + 1);
+    }
+    return correct && v2.getSize() == 4;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testInsertRangeToBegin()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  topit::Vector< int > v2;
+  try
+  {
+    v2.insert(0, v1, 0, 3);
+    bool correct = true;
+    for (size_t i = 0; i < v2.getSize() && correct; ++i)
+    {
+      correct = v2[i] == (i + 1);
+    }
+    return correct && v2.getSize() == 3;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testInsertRangeToEnd()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  topit::Vector< int > v2;
+  v2.pushBack(1);
+  try
+  {
+    v2.insert(1, v1, 1, 3);
+    bool correct = true;
+    for (size_t i = 0; i < v2.getSize() && correct; ++i)
+    {
+      correct = v2[i] == (i + 1);
+    }
+    return correct && v2.getSize() == 3;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testInsertRangeOutOfRange()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  topit::Vector< int > v2;
+  try
+  {
+    v2.insert(10, v1, 0, 1);
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
+bool testInsertRangeIntoItself()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  v1.pushBack(4);
+  try
+  {
+    v1.insert(1, v1, 2, 4);
+    bool correct = true;
+    correct = correct && v1[0] == 1;
+    correct = correct && v1[1] == 3;
+    correct = correct && v1[2] == 4;
+    correct = correct && v1[3] == 2;
+    correct = correct && v1[4] == 3;
+    correct = correct && v1[5] == 4;
+    return correct && v1.getSize() == 6;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
+bool testInsertRangeIntoItselfInTheSamePlace()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  v1.pushBack(4);
+  try
+  {
+    v1.insert(3, v1, 2, 4);
+    bool correct = true;
+    correct = correct && v1[0] == 1;
+    correct = correct && v1[1] == 2;
+    correct = correct && v1[2] == 3;
+    correct = correct && v1[3] == 4;
+    return correct && v1.getSize() == 4;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -429,6 +565,13 @@ int main()
       REGISTER_TEST("erase empty test", testEraseEmpty),
       REGISTER_TEST("erase  begin test", testEraseBegin),
       REGISTER_TEST("erase end test", testEraseEnd),
+      REGISTER_TEST("insert range of elements in the mid test", testInsertRange),
+      REGISTER_TEST("insert range of elements to begin test", testInsertRangeToBegin),
+      REGISTER_TEST("insert range of elements to end test ", testInsertRangeToEnd),
+      REGISTER_TEST("insert range of elements out of range", testInsertRangeOutOfRange),
+      REGISTER_TEST("insert range of elements in the same vector", testInsertRangeIntoItself),
+      REGISTER_TEST("insert range of elements in the same vector and same place",
+                    testInsertRangeIntoItselfInTheSamePlace),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
