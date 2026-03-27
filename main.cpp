@@ -291,7 +291,6 @@ bool testInsertToBegin()
   try
   {
     v.insert(0, 10);
-    std::cout << v.getSize() << "\n";
     return v.at(0) == 10 && v.getSize() == 1;
   }
   catch (...)

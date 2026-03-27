@@ -256,6 +256,12 @@ namespace topit
 
   template < class T > void Vector< T >::erase(size_t i)
   {
+    if (i > size_)
+    {
+      throw std::runtime_error("can't erase element out of array size");
+    }
+    copyTo(data_ + i + 1, data_ + size_, data_ + i);
+    --size_;
   }
 
   template < class T > T &Vector< T >::operator[](size_t index) noexcept
