@@ -293,16 +293,49 @@ namespace topit
 
   template < class T > void Vector< T >::erase(size_t i)
   {
-    if (i > size_)
+    if (i >= size_)
     {
       throw std::runtime_error("can't erase element out of array size");
     }
-    copyTo(data_ + i + 1, data_ + size_, data_ + i);
-    --size_;
+    T *new_data = createCopy(data_, data_ + i, cap_);
+    try
+    {
+      copyTo(data_ + i + 1, data_ + size_, new_data + i);
+      delete[] data_;
+      data_ = new_data;
+      --size_;
+    }
+    catch (...)
+    {
+      delete[] new_data;
+      throw;
+    }
   }
 
   template < class T > void Vector< T >::erase(size_t from, size_t to)
   {
+    if (from >= size_ || to > size_)
+    {
+      throw std::runtime_error("can't erase elements out of range in rhs array");
+    }
+    if (from > to)
+    {
+      throw std::runtime_error("can't erase elements range: lhs more than rhs");
+    }
+    size_t diff = to - from;
+    T *new_data = createCopy(data_, data_ + from, cap_);
+    try
+    {
+      copyTo(data_ + to, data_ + size_, new_data + from);
+      delete[] data_;
+      data_ = new_data;
+      size_ -= diff;
+    }
+    catch (...)
+    {
+      delete[] new_data;
+      throw;
+    }
   }
 
   template < class T > T &Vector< T >::operator[](size_t index) noexcept
