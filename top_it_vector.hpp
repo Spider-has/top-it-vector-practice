@@ -210,7 +210,15 @@ namespace topit
     {
       size_t new_cap = cap_ ? cap_ * 2 : 1;
       T *new_arr = createCopy(data_, data_ + size_, new_cap);
-      new_arr[size_] = val;
+      try
+      {
+        new_arr[size_] = val;
+      }
+      catch (...)
+      {
+        delete[] new_arr;
+        throw;
+      }
       cap_ = new_cap;
       delete[] data_;
       data_ = new_arr;
@@ -269,25 +277,23 @@ namespace topit
     {
       throw std::runtime_error("can't insert elements out of range in rhs array");
     }
-    if (this != std::addressof(rhs) || (i >= to || i <= from))
+
+    size_t diff = to - from;
+    size_t newCapacity = size_ + diff < cap_ ? cap_ : std::max((size_ + diff) * 2, cap_ * 2);
+    T *new_data = createCopy(data_, data_ + i, newCapacity);
+    try
     {
-      size_t diff = to - from;
-      size_t newCapacity = size_ + diff < cap_ ? cap_ : std::max((size_ + diff) * 2, cap_ * 2);
-      T *new_data = createCopy(data_, data_ + i, newCapacity);
-      try
-      {
-        copyTo(rhs.data_ + from, rhs.data_ + to, new_data + i);
-        copyTo(data_ + i, data_ + size_, new_data + i + diff);
-        delete[] data_;
-        data_ = new_data;
-        size_ += diff;
-        cap_ = newCapacity;
-      }
-      catch (...)
-      {
-        delete[] new_data;
-        throw;
-      }
+      copyTo(rhs.data_ + from, rhs.data_ + to, new_data + i);
+      copyTo(data_ + i, data_ + size_, new_data + i + diff);
+      delete[] data_;
+      data_ = new_data;
+      size_ += diff;
+      cap_ = newCapacity;
+    }
+    catch (...)
+    {
+      delete[] new_data;
+      throw;
     }
   }
 
@@ -365,7 +371,7 @@ namespace topit
     throw std::out_of_range("can't get element out of range");
   }
 
-  template < class T > bool operator==(const Vector< T > lhs, const Vector< T > &rhs) noexcept
+  template < class T > bool operator==(const Vector< T > &lhs, const Vector< T > &rhs) noexcept
   {
     bool isEqual = lhs.getSize() == rhs.getSize();
     for (size_t i = 0; i < lhs.getSize() && (isEqual = isEqual && lhs[i] == rhs[i]); ++i)
@@ -374,7 +380,7 @@ namespace topit
     return isEqual;
   }
 
-  template < class T > bool operator!=(const Vector< T > lhs, const Vector< T > &rhs) noexcept
+  template < class T > bool operator!=(const Vector< T > &lhs, const Vector< T > &rhs) noexcept
   {
     return !(lhs == rhs);
   }

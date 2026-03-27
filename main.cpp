@@ -562,8 +562,10 @@ bool testInsertRangeIntoItselfInTheSamePlace()
     correct = correct && v1[0] == 1;
     correct = correct && v1[1] == 2;
     correct = correct && v1[2] == 3;
-    correct = correct && v1[3] == 4;
-    return correct && v1.getSize() == 4;
+    correct = correct && v1[3] == 3;
+    correct = correct && v1[4] == 4;
+    correct = correct && v1[5] == 4;
+    return correct && v1.getSize() == 6;
   }
   catch (...)
   {
@@ -724,7 +726,7 @@ int main()
   size_t left_success = 1;
   size_t right_success = 1;
 
-  printRunTests(__FILE_NAME__);
+  printRunTests(__FILE__);
   for (size_t i = 0; i < count; ++i)
   {
     bool res = tests[i].func_ptr();
@@ -734,7 +736,7 @@ int main()
       {
         printSuccessedBeforeTests(left_success, right_success);
       }
-      printFailedTestInfo(__FILE_NAME__, tests[i], i + 1);
+      printFailedTestInfo(__FILE__, tests[i], i + 1);
       left_success = i + 2;
       right_success = i + 2;
     }
