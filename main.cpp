@@ -300,6 +300,33 @@ bool testInsertToBegin()
   }
 }
 
+bool testInsertIntoCenter()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(3);
+  v.pushBack(5);
+  v.pushBack(6);
+  v.pushBack(8);
+
+  try
+  {
+    v.insert(3, 4);
+    v.insert(6, 7);
+    bool correct = true;
+    for (size_t i = 0; i < v.getSize() && correct; ++i)
+    {
+      correct = v[i] == (i + 1);
+    }
+    return correct && v.getSize() == 8;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -325,6 +352,7 @@ int main()
       REGISTER_TEST("insert in different pos test", testInsert),
       REGISTER_TEST("insert out of range test", testInsertOutOfRange),
       REGISTER_TEST("insert element into begin", testInsertToBegin),
+      REGISTER_TEST("insert some elements into center and end", testInsertIntoCenter),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
@@ -333,7 +361,7 @@ int main()
   size_t left_success = 1;
   size_t right_success = 1;
 
-  printRunTests();
+  printRunTests(__FILE_NAME__);
   for (size_t i = 0; i < count; ++i)
   {
     bool res = tests[i].func_ptr();
@@ -343,13 +371,13 @@ int main()
       {
         printSuccessedBeforeTests(left_success, right_success);
       }
-      printFailedTestInfo(tests[i], i + 1);
+      printFailedTestInfo(__FILE_NAME__, tests[i], i + 1);
       left_success = i + 2;
       right_success = i + 2;
     }
     else
     {
-      right_success++;
+      right_success = i + 1;
     }
     success += res;
   }
