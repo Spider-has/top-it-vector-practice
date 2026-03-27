@@ -535,6 +535,89 @@ bool testInsertRangeIntoItselfInTheSamePlace()
   }
 }
 
+bool testEraseRange()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  v1.pushBack(10);
+  v1.pushBack(11);
+  v1.pushBack(2);
+  try
+  {
+    v1.erase(1, 3);
+    bool correct = true;
+    for (size_t i = 0; i < v1.getSize() && correct; ++i)
+    {
+      correct = v1[i] == (i + 1);
+    }
+    return correct && v1.getSize() == 2;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testEraseRangeFromBegin()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(5);
+  v1.pushBack(6);
+  v1.pushBack(1);
+  v1.pushBack(2);
+  try
+  {
+    v1.erase(0, 2);
+    bool correct = true;
+    for (size_t i = 0; i < v1.getSize() && correct; ++i)
+    {
+      correct = v1[i] == (i + 1);
+    }
+    return correct && v1.getSize() == 2;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testEraseRangeToEnd()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  v1.pushBack(4);
+  try
+  {
+    v1.erase(2, 4);
+    bool correct = true;
+    for (size_t i = 0; i < v1.getSize() && correct; ++i)
+    {
+      correct = v1[i] == (i + 1);
+    }
+    return correct && v1.getSize() == 2;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testEraseOutOfRange()
+{
+  topit::Vector< int > v1;
+  try
+  {
+    v1.erase(1, 3);
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -572,6 +655,11 @@ int main()
       REGISTER_TEST("insert range of elements in the same vector", testInsertRangeIntoItself),
       REGISTER_TEST("insert range of elements in the same vector and same place",
                     testInsertRangeIntoItselfInTheSamePlace),
+      REGISTER_TEST("erase range of elements in the mid test", testEraseRange),
+      REGISTER_TEST("erase range of elements to begin test", testEraseRangeFromBegin),
+      REGISTER_TEST("erase range of elements to end test ", testEraseRangeToEnd),
+      REGISTER_TEST("insert range of elements out of range", testEraseOutOfRange),
+
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
