@@ -11,15 +11,29 @@ static constexpr char GREEN_TEXT[] = "\033[32m";
 static constexpr char RED_TEXT[] = "\033[31m";
 static constexpr char CLEAR_STYLE[] = "\033[0m";
 
+struct Test
+{
+  const char *desc;
+  const char *func_name;
+  bool (*func_ptr)();
+  int line;
+};
+
+#define REGISTER_TEST(desc, func)                                                                                      \
+  Test                                                                                                                 \
+  {                                                                                                                    \
+    desc, #func, func, __LINE__                                                                                        \
+  }
+
 bool testEmptyVector()
 {
+  int line = __LINE__;
   topit::Vector< int > v;
   return v.isEmpty();
 }
 
 bool testPushBack()
 {
-  // std::cout << __func__ << "\n";
   topit::Vector< int > v;
   v.pushBack(1);
   assert(v.getSize() == 1 && "size != 1");
@@ -274,38 +288,47 @@ bool testMoveAssign()
   return v1.getSize() == 0 && v1.isEmpty() && v2.getSize() == 3;
 }
 
+void printFailedTestInfo(const Test &test, int i)
+{
+  std::cout << RED_TEXT << i << ". [-] " << test.desc << ": " << BOLD_TEXT << __FILE_NAME__ << ":" << test.line << "-"
+            << test.func_name << CLEAR_STYLE << "\n";
+}
+
 int main()
 {
-  using f_p = std::pair< const char *, bool (*)() >;
-  f_p tests[] = {{"empty vector test", testEmptyVector},
-                 {"push back vector check", testPushBack},
-                 {"pop back method check", testPopBack},
-                 {"capacity method check", testCapacityChanging},
-                 {"element inbound access", testElementInboundAccess},
-                 {"element out of bound access", testElementOutofboundAccess},
-                 {"const element inbound access", testElementInboundConstAccess},
-                 {"const element out of bound access", testElementOutofboundConstAccess},
-                 {"copy constructor test", testCopyConstructor},
-                 {"copy construtcot not empty", testCopyConstructorNonEmpty},
-                 {"not equal diff size vectors", testNotEqualVectorsDiffSize},
-                 {"not equal diff elements vectors", testNotEqualVectorsDiffElemetnts},
-                 {"equal copy constructor vector", testEqualVectorsWithCopyConstuctor},
-                 {"equal vectors", testEqualVectors},
-                 {"assing operator", testOperatorAssign},
-                 {"move constructor", testMoveConstructor},
-                 {"test move assign", testMoveAssign}};
+  Test tests[] = {REGISTER_TEST("empty vector test", testEmptyVector),
+                  REGISTER_TEST("push back vector check", testPushBack),
+                  REGISTER_TEST("pop back method check", testPopBack),
+                  REGISTER_TEST("capacity method check", testCapacityChanging),
+                  REGISTER_TEST("element inbound access", testElementInboundAccess),
+                  REGISTER_TEST("element out of bound access", testElementOutofboundAccess),
+                  REGISTER_TEST("const element inbound access", testElementInboundConstAccess),
+                  REGISTER_TEST("const element out of bound access", testElementOutofboundConstAccess),
+                  REGISTER_TEST("copy constructor test", testCopyConstructor),
+                  REGISTER_TEST("copy construtcot not empty", testCopyConstructorNonEmpty),
+                  REGISTER_TEST("not equal diff size vectors", testNotEqualVectorsDiffSize),
+                  REGISTER_TEST("not equal diff elements vectors", testNotEqualVectorsDiffElemetnts),
+                  REGISTER_TEST("equal copy constructor vector", testEqualVectorsWithCopyConstuctor),
+                  REGISTER_TEST("equal vectors", testEqualVectors),
+                  REGISTER_TEST("assing operator", testOperatorAssign),
+                  REGISTER_TEST("move constructor", testMoveConstructor),
+                  REGISTER_TEST("test move assign", testMoveAssign)};
 
-  const size_t count = sizeof(tests) / sizeof(f_p);
+  const size_t count = sizeof(tests) / sizeof(Test);
   std::cout << std::boolalpha;
   size_t success = 0;
 
-  std::cout << "run tests in file: " << BOLD_TEXT << __FILE_NAME__ << CLEAR_STYLE << "\n";
+  std::cout << "Run tests in file: " << BOLD_TEXT << __FILE_NAME__ << CLEAR_STYLE << "\n\n";
   for (size_t i = 0; i < count; ++i)
   {
-    bool res = tests[i].second();
+    bool res = tests[i].func_ptr();
     if (!res)
     {
-      std::cout << tests[i].first << ": " << res << "\n";
+      printFailedTestInfo(tests[i], i);
+    }
+    else
+    {
+      std::cout << GREEN_TEXT << i << ". [+]" << CLEAR_STYLE << "\n";
     }
     success += res;
   }
