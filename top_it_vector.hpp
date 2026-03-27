@@ -62,6 +62,7 @@ namespace topit
     template < class FwdIterator > void insert(VectorIterator pos, FwdIterator begin, FwdIterator end);
 
   private:
+    static T *copyTo(T *start, T *end, T *to);
     static T *createCopy(T *start, T *end, size_t cap);
 
     T *data_;
@@ -178,16 +179,22 @@ namespace topit
     swap(cpy); //  SWAAAAAP NOOOOEXXCEEPT!!!!!!
   }
 
+  template < class T > T *Vector< T >::copyTo(T *start, T *end, T *to)
+  {
+    for (; start != end; ++start, ++to)
+    {
+
+      *to = *start;
+    }
+    return to;
+  }
+
   template < class T > T *Vector< T >::createCopy(T *start, T *end, size_t cap)
   {
     T *new_data = new T[cap];
     try
     {
-      size_t i = 0;
-      for (; start != end; ++start, ++i)
-      {
-        new_data[i] = *start;
-      }
+      copyTo(start, end, new_data);
     }
     catch (...)
     {
@@ -226,7 +233,26 @@ namespace topit
 
   template < class T > void Vector< T >::insert(size_t i, const T &val)
   {
-    std::cout << i << " " << val << "\n";
+    if (i > size_)
+    {
+      throw std::runtime_error("cant't insert element out of array size");
+    }
+    size_t newCapacity = size_ + 1 < cap_ ? cap_ : cap_ * 2;
+    T *new_data = createCopy(data_, data_ + i, newCapacity);
+    try
+    {
+      new_data[i] = val;
+      copyTo(data_ + i, data_ + size_, new_data + i + 1);
+      delete[] data_;
+      data_ = new_data;
+      cap_ = newCapacity;
+      size_++;
+    }
+    catch (...)
+    {
+      delete[] new_data;
+      throw;
+    }
   }
 
   template < class T > T &Vector< T >::operator[](size_t index) noexcept
