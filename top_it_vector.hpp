@@ -7,7 +7,6 @@
 #include <utility>
 
 // to practice
-// TODO:: ТЕсты для copy move
 // TODO:: Insert и erase
 // TODO:: + для диапазона значений из другого вектора
 // TODO:: Все тесты на все новые методы + соблюдаем строгую гарантию
@@ -253,6 +252,10 @@ namespace topit
       delete[] new_data;
       throw;
     }
+  }
+
+  template < class T > void Vector< T >::erase(size_t i)
+  {
   }
 
   template < class T > T &Vector< T >::operator[](size_t index) noexcept

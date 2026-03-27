@@ -327,6 +327,79 @@ bool testInsertIntoCenter()
   }
 }
 
+bool testErase()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(10);
+  v.pushBack(3);
+
+  try
+  {
+    v.erase(2);
+    bool correct = true;
+    for (size_t i = 0; i < v.getSize() && correct; ++i)
+    {
+      correct = v[i] == (i + 1);
+    }
+    return correct && v.getSize() == 3;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testEraseEmpty()
+{
+  topit::Vector< int > v;
+
+  try
+  {
+    v.erase(1);
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
+bool testEraseBegin()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+
+  try
+  {
+    v.erase(0);
+    return v.getSize() == 1 && v[0] == 2;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
+bool testEraseEnd()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+
+  try
+  {
+    v.erase(1);
+    return v.getSize() == 1 && v[0] == 1;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -353,6 +426,10 @@ int main()
       REGISTER_TEST("insert out of range test", testInsertOutOfRange),
       REGISTER_TEST("insert element into begin", testInsertToBegin),
       REGISTER_TEST("insert some elements into center and end", testInsertIntoCenter),
+      REGISTER_TEST("erase element in the mid test", testErase),
+      REGISTER_TEST("erase empty test", testEraseEmpty),
+      REGISTER_TEST("erase  begin test", testEraseBegin),
+      REGISTER_TEST("erase end test", testEraseEnd),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
