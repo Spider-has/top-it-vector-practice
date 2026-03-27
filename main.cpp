@@ -487,6 +487,42 @@ bool testInsertRangeOutOfRange()
   }
 }
 
+bool testInsertRhsRangeOutOfRange()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  topit::Vector< int > v2;
+  try
+  {
+    v2.insert(0, v2, 11, 15);
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
+bool testInsertRangeLhsBiggerThanRhs()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  topit::Vector< int > v2;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(3);
+  v1.pushBack(4);
+  try
+  {
+    v2.insert(0, v2, 3, 2);
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
 bool testInsertRangeIntoItself()
 {
   topit::Vector< int > v1;
@@ -655,11 +691,12 @@ int main()
       REGISTER_TEST("insert range of elements in the same vector", testInsertRangeIntoItself),
       REGISTER_TEST("insert range of elements in the same vector and same place",
                     testInsertRangeIntoItselfInTheSamePlace),
+      REGISTER_TEST("insert range of elements rhs out of range", testInsertRhsRangeOutOfRange),
+      REGISTER_TEST("insert range of elements lhs bigger than rhs out of range", testInsertRangeLhsBiggerThanRhs),
       REGISTER_TEST("erase range of elements in the mid test", testEraseRange),
       REGISTER_TEST("erase range of elements to begin test", testEraseRangeFromBegin),
       REGISTER_TEST("erase range of elements to end test ", testEraseRangeToEnd),
-      REGISTER_TEST("insert range of elements out of range", testEraseOutOfRange),
-
+      REGISTER_TEST("erase range of elements out of range", testEraseOutOfRange),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
