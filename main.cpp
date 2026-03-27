@@ -10,7 +10,6 @@
 
 bool testEmptyVector()
 {
-  int line = __LINE__;
   topit::Vector< int > v;
   return v.isEmpty();
 }
@@ -272,6 +271,35 @@ bool testInsert()
   return v.getSize() == 3 && v[0] == 2 && v[1] == 1 && v[2] == 3;
 }
 
+bool testInsertOutOfRange()
+{
+  topit::Vector< int > v;
+  try
+  {
+    v.insert(12, 1);
+    return false;
+  }
+  catch (...)
+  {
+  }
+  return v.isEmpty();
+}
+
+bool testInsertToBegin()
+{
+  topit::Vector< int > v;
+  try
+  {
+    v.insert(0, 10);
+    std::cout << v.getSize() << "\n";
+    return v.at(0) == 10 && v.getSize() == 1;
+  }
+  catch (...)
+  {
+    return false;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -295,6 +323,8 @@ int main()
       REGISTER_TEST("copy assing operator test", testOperatorAssign),
       REGISTER_TEST("move assign operator test", testMoveAssign),
       REGISTER_TEST("insert in different pos test", testInsert),
+      REGISTER_TEST("insert out of range test", testInsertOutOfRange),
+      REGISTER_TEST("insert element into begin", testInsertToBegin),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
@@ -309,18 +339,24 @@ int main()
     bool res = tests[i].func_ptr();
     if (!res)
     {
-      printSuccessedBeforeTests(left_success, right_success);
+      if (left_success != right_success)
+      {
+        printSuccessedBeforeTests(left_success, right_success);
+      }
       printFailedTestInfo(tests[i], i + 1);
       left_success = i + 2;
       right_success = i + 2;
     }
     else
     {
-      right_success = i + 1;
+      right_success++;
     }
     success += res;
   }
-
+  if (left_success != right_success)
+  {
+    printSuccessedBeforeTests(left_success, right_success);
+  }
   std::cout << "\n";
   if (success == count)
   {
