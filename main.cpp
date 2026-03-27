@@ -6,16 +6,21 @@
 
 #include "top_it_vector.hpp"
 
+static constexpr char BOLD_TEXT[] = "\033[1m";
+static constexpr char GREEN_TEXT[] = "\033[32m";
+static constexpr char RED_TEXT[] = "\033[31m";
+static constexpr char CLEAR_STYLE[] = "\033[0m";
+
 bool testEmptyVector()
 {
-  topit::Vector<int> v;
+  topit::Vector< int > v;
   return v.isEmpty();
 }
 
 bool testPushBack()
 {
   // std::cout << __func__ << "\n";
-  topit::Vector<int> v;
+  topit::Vector< int > v;
   v.pushBack(1);
   assert(v.getSize() == 1 && "size != 1");
   v.pushBack(2);
@@ -32,7 +37,7 @@ bool testPushBack()
 
 bool testInsert()
 {
-  topit::Vector<int> v;
+  topit::Vector< int > v;
   v.pushBack(1);
   v.insert(0, 2);
   v.insert(2, 3);
@@ -41,7 +46,7 @@ bool testInsert()
 
 bool testPopBack()
 {
-  topit::Vector<int> v;
+  topit::Vector< int > v;
   v.pushBack(20);
   v.pushBack(10);
   v.pushBack(30);
@@ -59,7 +64,7 @@ bool testPopBack()
 
 bool testElementInboundAccess()
 {
-  topit::Vector<int> v;
+  topit::Vector< int > v;
   v.pushBack(1);
   try
   {
@@ -74,7 +79,7 @@ bool testElementInboundAccess()
 
 bool testElementOutofboundAccess()
 {
-  topit::Vector<int> v;
+  topit::Vector< int > v;
   try
   {
     v.at(0);
@@ -92,9 +97,9 @@ bool testElementOutofboundAccess()
 
 bool testElementInboundConstAccess()
 {
-  topit::Vector<int> v;
+  topit::Vector< int > v;
   v.pushBack(1);
-  const topit::Vector<int> &c_v = v;
+  const topit::Vector< int > &c_v = v;
   try
   {
     const int &val = c_v.at(0);
@@ -108,7 +113,7 @@ bool testElementInboundConstAccess()
 
 bool testElementOutofboundConstAccess()
 {
-  const topit::Vector<int> v;
+  const topit::Vector< int > v;
   try
   {
     v.at(0);
@@ -126,7 +131,7 @@ bool testElementOutofboundConstAccess()
 
 bool testCapacityChanging()
 {
-  topit::Vector<int> v;
+  topit::Vector< int > v;
   v.pushBack(1);
   v.pushBack(2);
   v.pushBack(3);
@@ -144,16 +149,16 @@ bool testCapacityChanging()
 
 bool testCopyConstructor()
 {
-  topit::Vector<int> v;
-  topit::Vector<int> yav{v};
+  topit::Vector< int > v;
+  topit::Vector< int > yav{v};
   return v == yav;
 }
 
 bool testCopyConstructorNonEmpty()
 {
-  topit::Vector<int> v;
+  topit::Vector< int > v;
   v.pushBack(1);
-  topit::Vector<int> yav{v};
+  topit::Vector< int > yav{v};
   try
   {
     return yav.getSize() == v.getSize() && yav.at(0) == v.at(0);
@@ -167,46 +172,46 @@ bool testCopyConstructorNonEmpty()
 
 bool testNotEqualVectorsDiffSize()
 {
-  topit::Vector<int> v1;
+  topit::Vector< int > v1;
   v1.pushBack(1);
   v1.pushBack(2);
   v1.pushBack(3);
   v1.pushBack(4);
-  topit::Vector<int> v2{v1};
+  topit::Vector< int > v2{v1};
   v2.popBack();
   return v1 != v2;
 }
 
 bool testNotEqualVectorsDiffElemetnts()
 {
-  topit::Vector<int> v1;
+  topit::Vector< int > v1;
   v1.pushBack(1);
   v1.pushBack(2);
   v1.pushBack(3);
   v1.pushBack(4);
-  topit::Vector<int> v2{v1};
+  topit::Vector< int > v2{v1};
   v2[2] = 5;
   return v1 != v2;
 }
 
 bool testEqualVectorsWithCopyConstuctor()
 {
-  topit::Vector<int> v1;
+  topit::Vector< int > v1;
   v1.pushBack(1);
   v1.pushBack(2);
   v1.pushBack(3);
   v1.pushBack(4);
-  topit::Vector<int> v2{v1};
+  topit::Vector< int > v2{v1};
   return v1 == v2;
 }
 
 bool testEqualVectors()
 {
-  topit::Vector<int> v1;
+  topit::Vector< int > v1;
   v1.pushBack(1);
   v1.pushBack(2);
   v1.pushBack(3);
-  topit::Vector<int> v2;
+  topit::Vector< int > v2;
   v2.pushBack(1);
   v2.pushBack(2);
   v2.pushBack(3);
@@ -215,12 +220,12 @@ bool testEqualVectors()
 
 bool testOperatorAssign()
 {
-  topit::Vector<int> v1;
+  topit::Vector< int > v1;
   v1.pushBack(1);
   v1.pushBack(2);
   v1.pushBack(3);
 
-  topit::Vector<int> v2;
+  topit::Vector< int > v2;
   v2.pushBack(1);
   v2 = v1;
   return v2 == v1;
@@ -228,12 +233,12 @@ bool testOperatorAssign()
 
 bool testMoveConstructor()
 {
-  topit::Vector<int> v1;
+  topit::Vector< int > v1;
   v1.pushBack(1);
   v1.pushBack(2);
   v1.pushBack(3);
 
-  topit::Vector<int> v2{std::move(v1)};
+  topit::Vector< int > v2{std::move(v1)};
 
   try
   {
@@ -249,12 +254,12 @@ bool testMoveConstructor()
 
 bool testMoveAssign()
 {
-  topit::Vector<int> v1;
+  topit::Vector< int > v1;
   v1.pushBack(1);
   v1.pushBack(2);
   v1.pushBack(3);
 
-  topit::Vector<int> v2;
+  topit::Vector< int > v2;
 
   v2 = std::move(v1);
 
@@ -266,13 +271,12 @@ bool testMoveAssign()
   catch (...)
   {
   }
-
   return v1.getSize() == 0 && v1.isEmpty() && v2.getSize() == 3;
 }
 
 int main()
 {
-  using f_p = std::pair<const char *, bool (*)()>;
+  using f_p = std::pair< const char *, bool (*)() >;
   f_p tests[] = {{"empty vector test", testEmptyVector},
                  {"push back vector check", testPushBack},
                  {"pop back method check", testPopBack},
@@ -288,11 +292,14 @@ int main()
                  {"equal copy constructor vector", testEqualVectorsWithCopyConstuctor},
                  {"equal vectors", testEqualVectors},
                  {"assing operator", testOperatorAssign},
-                 {"move constructor", testMoveConstructor}};
+                 {"move constructor", testMoveConstructor},
+                 {"test move assign", testMoveAssign}};
 
   const size_t count = sizeof(tests) / sizeof(f_p);
   std::cout << std::boolalpha;
   size_t success = 0;
+
+  std::cout << "run tests in file: " << BOLD_TEXT << __FILE_NAME__ << CLEAR_STYLE << "\n";
   for (size_t i = 0; i < count; ++i)
   {
     bool res = tests[i].second();
@@ -304,5 +311,17 @@ int main()
   }
   // TODO: Подсчет пройденных/непройденных тестов
   // TODO: Вывод только пройденных тестов
-  std::cout << "\ntests passed: " << success << " / " << count << "\n";
+
+  std::cout << "\n";
+  if (success == count)
+  {
+    std::cout << GREEN_TEXT << "All tests passed successfully: " << BOLD_TEXT << success << " / " << count << "\n"
+              << CLEAR_STYLE;
+  }
+  else
+  {
+    std::cout << "Some test " << RED_TEXT << "failed with errors: " << CLEAR_STYLE << BOLD_TEXT << success << " / "
+              << count << "\n"
+              << CLEAR_STYLE;
+  }
 }
