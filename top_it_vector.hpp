@@ -7,7 +7,6 @@
 #include <utility>
 
 // to practice
-// TODO:: Insert и erase
 // TODO:: + для диапазона значений из другого вектора
 // TODO:: Все тесты на все новые методы + соблюдаем строгую гарантию
 
@@ -47,8 +46,10 @@ namespace topit
     void popBack();
 
     void insert(size_t i, const T &val);
+    void insert(size_t i, const Vector< T > &rhs, size_t from, size_t to);
 
     void erase(size_t i);
+    void erase(size_t from, size_t to);
 
     void swap(Vector< T > &rhs) noexcept;
 
@@ -236,7 +237,7 @@ namespace topit
     {
       throw std::runtime_error("cant't insert element out of array size");
     }
-    size_t newCapacity = size_ + 1 < cap_ ? cap_ : cap_ * 2;
+    size_t newCapacity = size_ + 1 < cap_ ? cap_ : std::max((size_ + 1) * 2, cap_ * 2);
     T *new_data = createCopy(data_, data_ + i, newCapacity);
     try
     {
@@ -254,6 +255,42 @@ namespace topit
     }
   }
 
+  template < class T > void Vector< T >::insert(size_t i, const Vector< T > &rhs, size_t from, size_t to)
+  {
+    if (i > size_)
+    {
+      throw std::runtime_error("can't insert range to pos bigger than array size");
+    }
+    if (from > to)
+    {
+      throw std::runtime_error("the lhs of range is bigger than rhs");
+    }
+    if (from >= rhs.size_ || to > rhs.size_)
+    {
+      throw std::runtime_error("can't insert elements out of range in rhs array");
+    }
+    if (this != std::addressof(rhs) || (i >= to || i <= from))
+    {
+      size_t diff = to - from;
+      size_t newCapacity = size_ + diff < cap_ ? cap_ : std::max((size_ + diff) * 2, cap_ * 2);
+      T *new_data = createCopy(data_, data_ + i, newCapacity);
+      try
+      {
+        copyTo(rhs.data_ + from, rhs.data_ + to, new_data + i);
+        copyTo(data_ + i, data_ + size_, new_data + i + diff);
+        delete[] data_;
+        data_ = new_data;
+        size_ += diff;
+        cap_ = newCapacity;
+      }
+      catch (...)
+      {
+        delete[] new_data;
+        throw;
+      }
+    }
+  }
+
   template < class T > void Vector< T >::erase(size_t i)
   {
     if (i > size_)
@@ -262,6 +299,10 @@ namespace topit
     }
     copyTo(data_ + i + 1, data_ + size_, data_ + i);
     --size_;
+  }
+
+  template < class T > void Vector< T >::erase(size_t from, size_t to)
+  {
   }
 
   template < class T > T &Vector< T >::operator[](size_t index) noexcept
