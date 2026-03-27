@@ -654,6 +654,24 @@ bool testEraseOutOfRange()
   }
 }
 
+bool testEraseRangeLhsMoreThanRhs()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  v1.pushBack(1);
+  v1.pushBack(1);
+  v1.pushBack(1);
+  try
+  {
+    v1.erase(3, 1);
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -697,6 +715,7 @@ int main()
       REGISTER_TEST("erase range of elements to begin test", testEraseRangeFromBegin),
       REGISTER_TEST("erase range of elements to end test ", testEraseRangeToEnd),
       REGISTER_TEST("erase range of elements out of range", testEraseOutOfRange),
+      REGISTER_TEST("erase range of elements lhs more than rhs", testEraseRangeLhsMoreThanRhs),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
