@@ -4,26 +4,9 @@
 #include <stdexcept>
 #include <utility>
 
+#include "Test.hpp"
+#include "prettyOutput.hpp"
 #include "top_it_vector.hpp"
-
-static constexpr char BOLD_TEXT[] = "\033[1m";
-static constexpr char GREEN_TEXT[] = "\033[32m";
-static constexpr char RED_TEXT[] = "\033[31m";
-static constexpr char CLEAR_STYLE[] = "\033[0m";
-
-struct Test
-{
-  const char *desc;
-  const char *func_name;
-  bool (*func_ptr)();
-  int line;
-};
-
-#define REGISTER_TEST(desc, func)                                                                                      \
-  Test                                                                                                                 \
-  {                                                                                                                    \
-    desc, #func, func, __LINE__                                                                                        \
-  }
 
 bool testEmptyVector()
 {
@@ -47,15 +30,6 @@ bool testPushBack()
   assert(v[2] == 3 && "v[2] != 3");
 
   return v.getSize() == 3 && !v.isEmpty() && v.getCapacity() == 4 && v[0] == 1 && v[1] == 2 && v[2] == 3;
-}
-
-bool testInsert()
-{
-  topit::Vector< int > v;
-  v.pushBack(1);
-  v.insert(0, 2);
-  v.insert(2, 3);
-  return v.getSize() == 3 && v[0] == 2 && v[1] == 1 && v[2] == 3;
 }
 
 bool testPopBack()
@@ -289,56 +263,41 @@ bool testMoveAssign()
   return v1.getSize() == 0 && v1.isEmpty() && v2.getSize() == 3;
 }
 
-void printFailedTestInfo(const Test &test, size_t i)
+bool testInsert()
 {
-  std::cout << RED_TEXT << i << ". [-] " << test.desc << ": " << BOLD_TEXT << __FILE_NAME__ << ":" << test.line << "-"
-            << test.func_name << CLEAR_STYLE << "\n";
-}
-
-void printRunTests()
-{
-  std::cout << "Run tests in file: " << BOLD_TEXT << __FILE_NAME__ << CLEAR_STYLE << "\n\n";
-}
-
-void printAllTestsSuccessed(size_t count)
-{
-  std::cout << GREEN_TEXT << "All tests passed successfully: " << BOLD_TEXT << count << " / " << count << "\n"
-            << CLEAR_STYLE;
-}
-
-void someTestsFailed(size_t success, size_t count)
-{
-  std::cout << "Some test " << RED_TEXT << "failed with errors: " << CLEAR_STYLE << BOLD_TEXT << success << " / "
-            << count << "\n"
-            << CLEAR_STYLE;
-}
-
-void printSuccessedBeforeTests(size_t left_success, size_t right_success)
-{
-  std::cout << GREEN_TEXT << left_success << "-" << right_success << ". [+]" << CLEAR_STYLE << "\n";
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.insert(0, 2);
+  v.insert(2, 3);
+  return v.getSize() == 3 && v[0] == 2 && v[1] == 1 && v[2] == 3;
 }
 
 int main()
 {
-  Test tests[] = {REGISTER_TEST("empty vector test", testEmptyVector),
-                  REGISTER_TEST("push back vector check", testPushBack),
-                  REGISTER_TEST("pop back method check", testPopBack),
-                  REGISTER_TEST("capacity method check", testCapacityChanging),
-                  REGISTER_TEST("element inbound access", testElementInboundAccess),
-                  REGISTER_TEST("element out of bound access", testElementOutofboundAccess),
-                  REGISTER_TEST("const element inbound access", testElementInboundConstAccess),
-                  REGISTER_TEST("const element out of bound access", testElementOutofboundConstAccess),
-                  REGISTER_TEST("copy constructor test", testCopyConstructor),
-                  REGISTER_TEST("copy construtcot not empty", testCopyConstructorNonEmpty),
-                  REGISTER_TEST("not equal diff size vectors", testNotEqualVectorsDiffSize),
-                  REGISTER_TEST("not equal diff elements vectors", testNotEqualVectorsDiffElemetnts),
-                  REGISTER_TEST("equal copy constructor vector", testEqualVectorsWithCopyConstuctor),
-                  REGISTER_TEST("equal vectors", testEqualVectors),
-                  REGISTER_TEST("assing operator", testOperatorAssign),
-                  REGISTER_TEST("move constructor", testMoveConstructor),
-                  REGISTER_TEST("test move assign", testMoveAssign)};
+  using namespace prettyOut;
 
-  const size_t count = sizeof(tests) / sizeof(Test);
+  Test::Test tests[] = {
+      REGISTER_TEST("empty vector test", testEmptyVector),
+      REGISTER_TEST("push back vector test", testPushBack),
+      REGISTER_TEST("pop back method test", testPopBack),
+      REGISTER_TEST("capacity method test", testCapacityChanging),
+      REGISTER_TEST("element inbound access test", testElementInboundAccess),
+      REGISTER_TEST("element out of bound access test", testElementOutofboundAccess),
+      REGISTER_TEST("const element inbound access test", testElementInboundConstAccess),
+      REGISTER_TEST("const element out of bound access test", testElementOutofboundConstAccess),
+      REGISTER_TEST("copy constructor test", testCopyConstructor),
+      REGISTER_TEST("copy construtcot not empty test", testCopyConstructorNonEmpty),
+      REGISTER_TEST("move constructor test", testMoveConstructor),
+      REGISTER_TEST("not equal diff size vectors test", testNotEqualVectorsDiffSize),
+      REGISTER_TEST("not equal diff elements vectors test", testNotEqualVectorsDiffElemetnts),
+      REGISTER_TEST("equal copy constructor vector test", testEqualVectorsWithCopyConstuctor),
+      REGISTER_TEST("equal vectors test", testEqualVectors),
+      REGISTER_TEST("copy assing operator test", testOperatorAssign),
+      REGISTER_TEST("move assign operator test", testMoveAssign),
+      REGISTER_TEST("insert in different pos test", testInsert),
+  };
+
+  const size_t count = sizeof(tests) / sizeof(Test::Test);
   std::cout << std::boolalpha;
   size_t success = 0;
   size_t left_success = 1;
