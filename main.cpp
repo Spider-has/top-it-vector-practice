@@ -285,13 +285,37 @@ bool testMoveAssign()
   catch (...)
   {
   }
+
   return v1.getSize() == 0 && v1.isEmpty() && v2.getSize() == 3;
 }
 
-void printFailedTestInfo(const Test &test, int i)
+void printFailedTestInfo(const Test &test, size_t i)
 {
   std::cout << RED_TEXT << i << ". [-] " << test.desc << ": " << BOLD_TEXT << __FILE_NAME__ << ":" << test.line << "-"
             << test.func_name << CLEAR_STYLE << "\n";
+}
+
+void printRunTests()
+{
+  std::cout << "Run tests in file: " << BOLD_TEXT << __FILE_NAME__ << CLEAR_STYLE << "\n\n";
+}
+
+void printAllTestsSuccessed(size_t count)
+{
+  std::cout << GREEN_TEXT << "All tests passed successfully: " << BOLD_TEXT << count << " / " << count << "\n"
+            << CLEAR_STYLE;
+}
+
+void someTestsFailed(size_t success, size_t count)
+{
+  std::cout << "Some test " << RED_TEXT << "failed with errors: " << CLEAR_STYLE << BOLD_TEXT << success << " / "
+            << count << "\n"
+            << CLEAR_STYLE;
+}
+
+void printSuccessedBeforeTests(size_t left_success, size_t right_success)
+{
+  std::cout << GREEN_TEXT << left_success << "-" << right_success << ". [+]" << CLEAR_STYLE << "\n";
 }
 
 int main()
@@ -317,34 +341,34 @@ int main()
   const size_t count = sizeof(tests) / sizeof(Test);
   std::cout << std::boolalpha;
   size_t success = 0;
+  size_t left_success = 1;
+  size_t right_success = 1;
 
-  std::cout << "Run tests in file: " << BOLD_TEXT << __FILE_NAME__ << CLEAR_STYLE << "\n\n";
+  printRunTests();
   for (size_t i = 0; i < count; ++i)
   {
     bool res = tests[i].func_ptr();
     if (!res)
     {
-      printFailedTestInfo(tests[i], i);
+      printSuccessedBeforeTests(left_success, right_success);
+      printFailedTestInfo(tests[i], i + 1);
+      left_success = i + 2;
+      right_success = i + 2;
     }
     else
     {
-      std::cout << GREEN_TEXT << i << ". [+]" << CLEAR_STYLE << "\n";
+      right_success = i + 1;
     }
     success += res;
   }
-  // TODO: Подсчет пройденных/непройденных тестов
-  // TODO: Вывод только пройденных тестов
 
   std::cout << "\n";
   if (success == count)
   {
-    std::cout << GREEN_TEXT << "All tests passed successfully: " << BOLD_TEXT << success << " / " << count << "\n"
-              << CLEAR_STYLE;
+    printAllTestsSuccessed(count);
   }
   else
   {
-    std::cout << "Some test " << RED_TEXT << "failed with errors: " << CLEAR_STYLE << BOLD_TEXT << success << " / "
-              << count << "\n"
-              << CLEAR_STYLE;
+    someTestsFailed(success, count);
   }
 }
