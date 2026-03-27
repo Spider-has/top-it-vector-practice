@@ -12,15 +12,15 @@ namespace prettyOut
   static constexpr char RED_TEXT[] = "\033[31m";
   static constexpr char CLEAR_STYLE[] = "\033[0m";
 
-  void printFailedTestInfo(const Test::Test &test, size_t i)
+  void printFailedTestInfo(const char *filename, const Test::Test &test, size_t i)
   {
-    std::cout << RED_TEXT << i << ". [-] " << test.desc << ": " << BOLD_TEXT << __FILE_NAME__ << ":" << test.line << "-"
+    std::cout << RED_TEXT << i << ". [-] " << test.desc << ": " << BOLD_TEXT << filename << ":" << test.line << "-"
               << test.func_name << CLEAR_STYLE << "\n";
   }
 
-  void printRunTests()
+  void printRunTests(const char *filename)
   {
-    std::cout << "Run tests in file: " << BOLD_TEXT << __FILE_NAME__ << CLEAR_STYLE << "\n\n";
+    std::cout << "Run tests in file: " << BOLD_TEXT << filename << CLEAR_STYLE << "\n\n";
   }
 
   void printAllTestsSuccessed(size_t count)
