@@ -2,13 +2,10 @@
 #define TOP_IT_VECTOR_HPP
 
 #include <cstddef>
+#include <initializer_list>
 #include <memory>
 #include <stdexcept>
 #include <utility>
-
-// to practice
-// TODO:: + для диапазона значений из другого вектора
-// TODO:: Все тесты на все новые методы + соблюдаем строгую гарантию
 
 // homework
 // TODO:: random access iters для вектора
@@ -25,6 +22,7 @@ namespace topit
     Vector(const Vector< T > &rhs);
     Vector(Vector< T > &&rhs) noexcept;
     Vector(size_t size, const T &init);
+    Vector(std::initializer_list< T > il);
 
     explicit Vector(size_t size);
 
@@ -118,6 +116,17 @@ namespace topit
       size_(size),
       cap_((size))
   {
+  }
+
+  template < class T >
+  Vector< T >::Vector(std::initializer_list< T > il):
+      Vector(il.size())
+  {
+    size_t i = 0;
+    for (auto it = il.begin(); it < il.end(); ++it)
+    {
+      data_[i++] = *it;
+    }
   }
 
   template < class T > bool Vector< T >::isEmpty() const noexcept

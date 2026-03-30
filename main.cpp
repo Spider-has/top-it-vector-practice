@@ -316,7 +316,7 @@ bool testInsertIntoCenter()
     bool correct = true;
     for (size_t i = 0; i < v.getSize() && correct; ++i)
     {
-      correct = v[i] == (i + 1);
+      correct = v[i] == int(i + 1);
     }
     return correct && v.getSize() == 8;
   }
@@ -340,7 +340,7 @@ bool testErase()
     bool correct = true;
     for (size_t i = 0; i < v.getSize() && correct; ++i)
     {
-      correct = v[i] == (i + 1);
+      correct = v[i] == int(i + 1);
     }
     return correct && v.getSize() == 3;
   }
@@ -414,7 +414,7 @@ bool testInsertRange()
     bool correct = true;
     for (size_t i = 0; i < v2.getSize() && correct; ++i)
     {
-      correct = v2[i] == (i + 1);
+      correct = v2[i] == int(i + 1);
     }
     return correct && v2.getSize() == 4;
   }
@@ -437,7 +437,7 @@ bool testInsertRangeToBegin()
     bool correct = true;
     for (size_t i = 0; i < v2.getSize() && correct; ++i)
     {
-      correct = v2[i] == (i + 1);
+      correct = v2[i] == int(i + 1);
     }
     return correct && v2.getSize() == 3;
   }
@@ -461,7 +461,7 @@ bool testInsertRangeToEnd()
     bool correct = true;
     for (size_t i = 0; i < v2.getSize() && correct; ++i)
     {
-      correct = v2[i] == (i + 1);
+      correct = v2[i] == int(i + 1);
     }
     return correct && v2.getSize() == 3;
   }
@@ -586,7 +586,7 @@ bool testEraseRange()
     bool correct = true;
     for (size_t i = 0; i < v1.getSize() && correct; ++i)
     {
-      correct = v1[i] == (i + 1);
+      correct = v1[i] == int(i + 1);
     }
     return correct && v1.getSize() == 2;
   }
@@ -609,7 +609,7 @@ bool testEraseRangeFromBegin()
     bool correct = true;
     for (size_t i = 0; i < v1.getSize() && correct; ++i)
     {
-      correct = v1[i] == (i + 1);
+      correct = v1[i] == int(i + 1);
     }
     return correct && v1.getSize() == 2;
   }
@@ -632,7 +632,7 @@ bool testEraseRangeToEnd()
     bool correct = true;
     for (size_t i = 0; i < v1.getSize() && correct; ++i)
     {
-      correct = v1[i] == (i + 1);
+      correct = v1[i] == int(i + 1);
     }
     return correct && v1.getSize() == 2;
   }
@@ -672,6 +672,12 @@ bool testEraseRangeLhsMoreThanRhs()
   {
     return true;
   }
+}
+
+bool testInitializerList()
+{
+  topit::Vector< int > v = {1, 2, 3};
+  return v.getSize() == 3 && v[0] == 1 && v[1] == 2 && v[2] == 3;
 }
 
 int main()
@@ -718,6 +724,7 @@ int main()
       REGISTER_TEST("erase range of elements to end test ", testEraseRangeToEnd),
       REGISTER_TEST("erase range of elements out of range", testEraseOutOfRange),
       REGISTER_TEST("erase range of elements lhs more than rhs", testEraseRangeLhsMoreThanRhs),
+      REGISTER_TEST("erase initializer list contrustor", testInitializerList),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
