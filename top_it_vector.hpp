@@ -57,7 +57,7 @@ namespace topit
     void erase(size_t from, size_t to);
     RAIter< T > erase(RAIter< T > first, RAIter< T > last);
     RAIter< T > erase(RAIter< T > pos);
-    template < class K > void eraseIf(RAIter< T > first, RAIter< T >, K k);
+    template < class K > void eraseIf(RAIter< T > first, RAIter< T > last, K k);
 
     void swap(Vector< T > &rhs) noexcept;
 
@@ -462,7 +462,7 @@ namespace topit
     }
     if (first == last)
     {
-      return;
+      return RAIter< T >(this, last.i_);
     }
     size_t last_pos = last.i_ - (first.i_ - last.i_);
     rangeErasing(first.i_, last.i_);
@@ -478,6 +478,47 @@ namespace topit
     size_t last_pos = pos.i_;
     erase(pos.i_);
     return RAIter< T >(this, last_pos);
+  }
+
+  template < class T > template < class K > void Vector< T >::eraseIf(RAIter< T > first, RAIter< T > last, K k)
+  {
+    if (first.getPtr() != this || last.getPtr() != this)
+    {
+      throw std::runtime_error("can't erase if: first or last iter refers to another vector");
+    }
+    if (first > last)
+    {
+      throw std::runtime_error("can't erase if:begin iter more than end iter");
+    }
+    if (first == last)
+    {
+      return;
+    }
+    size_t start = first.i_;
+    size_t end = last.i_;
+    T *new_data = createCopy(data_, data_ + start, cap_);
+    try
+    {
+      size_t i = start;
+      size_t diff = (last - first);
+      size_t count = 0;
+      for (; first != last; ++first)
+      {
+        if (!k(*first))
+        {
+          new_data[i++] = *first;
+          count++;
+        }
+      }
+      diff = diff - count;
+      copyTo(data_ + end, data_ + size_, new_data + i);
+      assignWithLocal(new_data, size_ - diff, cap_);
+    }
+    catch (...)
+    {
+      delete[] new_data;
+      throw;
+    }
   }
 
   template < class T > T &Vector< T >::operator[](size_t index) noexcept
