@@ -11,8 +11,46 @@
 // TODO:: random access iters для вектора
 // TODO:: insert erase with iterators по 3 штуки
 // TODO:: + тесты
+
 namespace topit
 {
+  template < class T > class Vector;
+
+  template < class T > struct RAIter
+  {
+    RAIter();
+    RAIter< T > &operator++();
+    RAIter< T > operator++(int n);
+    RAIter< T > operator+(int n) const;
+    RAIter< T > &operator+=(int n);
+
+    RAIter< T > &operator--();
+    RAIter< T > operator--(int n);
+    RAIter< T > operator-(int n) const;
+    RAIter< T > &operator-=(int n);
+    long long operator-(RAIter< T > it) const;
+
+    T &operator[](size_t n) const;
+    T &operator*() const;
+    T *operator->() const;
+
+    bool operator==(const RAIter< T > &rhs) const noexcept;
+    bool operator!=(const RAIter< T > &rhs) const noexcept;
+    bool operator>(const RAIter< T > &rhs) const noexcept;
+    bool operator<(const RAIter< T > &rhs) const noexcept;
+    bool operator>=(const RAIter< T > &rhs) const noexcept;
+    bool operator<=(const RAIter< T > &rhs) const noexcept;
+
+  private:
+    RAIter(Vector< T > *vec, size_t i) noexcept:
+        curr_(vec),
+        i_(i)
+    {
+    }
+    Vector< T > *curr_;
+    size_t i_;
+  };
+
   template < class T > struct Vector
   {
   public:
@@ -22,9 +60,9 @@ namespace topit
     Vector(const Vector< T > &rhs);
     Vector(Vector< T > &&rhs) noexcept;
     Vector(size_t size, const T &init);
-    Vector(std::initializer_list< T > il);
+    explicit Vector(std::initializer_list< T > il);
 
-    explicit Vector(size_t size);
+    Vector(size_t size);
 
     Vector< T > &operator=(const Vector< T > &rhs);
     Vector< T > &operator=(Vector< T > &&rhs) noexcept;
@@ -58,6 +96,18 @@ namespace topit
     {
     };
     template < class FwdIterator > void insert(VectorIterator pos, FwdIterator begin, FwdIterator end);
+
+    void pushBackCount(size_t k, const T &val);
+    void unsafePushBack(size_t k, const T &val);
+    // example
+    template < class IT > void pushBackRange(IT start, IT end);
+    void reserve(size_t size);
+    void shrinkToFit(size_t size);
+
+    friend struct RAIter< T >;
+
+    RAIter< T > begin();
+    RAIter< T > end();
 
   private:
     static T *copyTo(T *start, T *end, T *to);
@@ -393,6 +443,34 @@ namespace topit
   {
     return !(lhs == rhs);
   }
+
+  template < class T > void Vector< T >::pushBackCount(size_t k, const T &val)
+  {
+  }
+
+  template < class T > void Vector< T >::unsafePushBack(size_t k, const T &val)
+  {
+  }
+
+  // TODO:: Домашка сделать резерв и shrink
+  void reserve(size_t size)
+  {
+  }
+
+  void shrinkToFit(size_t size)
+  {
+  }
+
+  // Лучше вместо end перекидывать size_t c, тогда мы говорим пользователю сразу, что он должен позаботиться о размере
+  // заранее и что это потенциально неээфективная операция
+  // template < class T > template < class IT > void Vector< T >::pushBackRange(IT start, size_t c)
+  // {
+  //   size_t c = 0;
+  //   for (auto it = b; it !+e; ++it, ++c)
+  //   {
+  //     // Если памяти не хватает на c -- далаем так, чтобы хватило и добавляем в конец.
+  //   }
+  // }
 }
 
 #endif
