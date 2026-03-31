@@ -1305,6 +1305,77 @@ bool testEraseAnotherVectorIter()
   }
 }
 
+bool testEraseIfEven()
+{
+  topit::Vector< int > v;
+  for (int i = 1; i <= 6; ++i)
+  {
+    v.pushBack(i);
+  }
+
+  v.eraseIf(v.begin(), v.end(), [](int x) { return x % 2 == 0; });
+
+  if (v.getSize() != 3)
+  {
+    return false;
+  }
+  if (v[0] != 1 || v[1] != 3 || v[2] != 5)
+  {
+    return false;
+  }
+  return true;
+}
+
+bool testEraseIfConsecutive()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(2);
+  v.pushBack(3);
+
+  v.eraseIf(v.begin(), v.end(), [](int x) { return x == 2; });
+
+  return (v.getSize() == 2 && v[0] == 1 && v[1] == 3);
+}
+
+bool testEraseIfAllMatch()
+{
+  topit::Vector< int > v;
+  v.pushBack(10);
+  v.pushBack(20);
+
+  v.eraseIf(v.begin(), v.end(), [](int x) { return x > 0; });
+
+  return (v.getSize() == 0);
+}
+
+bool testEraseIfRangeOnly()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(2);
+  v.pushBack(1);
+
+  v.eraseIf(v.begin() + 1, v.end() - 1, [](int x) { return x == 2; });
+
+  return (v.getSize() == 2 && v[0] == 1 && v[1] == 1);
+}
+
+bool testEraseIfStringLength()
+{
+  topit::Vector< std::string > v;
+  v.pushBack("cat");
+  v.pushBack("elephant");
+  v.pushBack("dog");
+
+  size_t threshold = 5;
+  v.eraseIf(v.begin(), v.end(), [threshold](const std::string &s) { return s.length() > threshold; });
+
+  return (v.getSize() == 2 && v[1] == "dog");
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -1381,6 +1452,11 @@ int main()
       REGISTER_TEST("erase iter from end test", testEraseLastIter),
       REGISTER_TEST("erase iter after last test", testEraseEndIterator),
       REGISTER_TEST("erase iter from another vector test", testEraseAnotherVectorIter),
+      REGISTER_TEST("erase if even elems, begin to end test", testEraseIfEven),
+      REGISTER_TEST("erase if even elems, begin to end, erasing 2 test", testEraseIfConsecutive),
+      REGISTER_TEST("erase if even elems, begin to end, erasing all test", testEraseIfAllMatch),
+      REGISTER_TEST("erase if even elems, middle test", testEraseIfRangeOnly),
+      REGISTER_TEST("erase if even elems, begin to end, strings test", testEraseIfStringLength),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
