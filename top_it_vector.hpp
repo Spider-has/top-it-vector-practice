@@ -363,8 +363,23 @@ namespace topit
     }
   }
 
-  template < class T > void Vector< T >::insert(RAIter< T > pos, RAIter< T > begin, RAIter< T > end)
+  template < class T > void Vector< T >::insert(RAIter< T > pos, RAIter< T > begin_it, RAIter< T > end_it)
   {
+    if (begin_it.curr_ != end_it.curr_)
+    {
+      throw std::runtime_error("can't intsert range from diff vector begin and end iters");
+    }
+    if (begin_it > end_it)
+    {
+      throw std::runtime_error("can't insert elems when begin iter more than end iter");
+    }
+    if (pos > end())
+    {
+      throw std::runtime_error("can't insert elems after vector end");
+    }
+    size_t from = begin_it - begin_it.curr_->begin();
+    size_t to = end_it - begin_it.curr_->begin();
+    rangeInsertion(pos.i_, begin_it.curr_->data_, from, to);
   }
 
   template < class T > void Vector< T >::insert(RAIter< T > pos, std::initializer_list< T > il)
@@ -461,7 +476,7 @@ namespace topit
   }
 
   // TODO:: Домашка сделать резерв и shrink
-  void reserve(size_t size)
+  template < class T > void Vector< T >::reserve(size_t size)
   {
   }
 
