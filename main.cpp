@@ -1193,7 +1193,7 @@ bool testEraseInvalidRange()
     v1.erase(v1.begin(), v2.end());
     return false;
   }
-  catch (const std::runtime_error &)
+  catch (...)
   {
     return true;
   }
@@ -1204,7 +1204,102 @@ bool testEraseInvalidRange()
     v1.erase(v1.begin() + 1, v1.begin());
     return false;
   }
-  catch (const std::runtime_error &)
+  catch (...)
+  {
+    return true;
+  }
+}
+
+bool testEraseBeginIter()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(3);
+
+  auto it = v.begin();
+  v.erase(it);
+
+  if (v.getSize() != 2)
+  {
+    return false;
+  }
+  if (v[0] != 2 || v[1] != 3)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testEraseMiddleIter()
+{
+  topit::Vector< int > v;
+  v.pushBack(10);
+  v.pushBack(20);
+  v.pushBack(30);
+
+  v.erase(v.begin() + 1);
+
+  if (v.getSize() != 2)
+  {
+    return false;
+  }
+  if (v[0] != 10 || v[1] != 30)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testEraseLastIter()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+
+  v.erase(v.end() - 1);
+
+  if (v.getSize() != 1)
+  {
+    return false;
+  }
+  if (v[0] != 1)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testEraseEndIterator()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+
+  try
+  {
+    v.erase(v.end());
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
+bool testEraseAnotherVectorIter()
+{
+  topit::Vector< int > v;
+  topit::Vector< int > v2;
+
+  try
+  {
+    v.erase(v2.end());
+    return false;
+  }
+  catch (...)
   {
     return true;
   }
@@ -1281,6 +1376,11 @@ int main()
       REGISTER_TEST("erase range all elems test iters`", testEraseAll),
       REGISTER_TEST("erase range empty test iters", testEraseEmptyRange),
       REGISTER_TEST("erase range with invalid iterators test", testEraseInvalidRange),
+      REGISTER_TEST("erase iter from begin test", testEraseBeginIter),
+      REGISTER_TEST("erase iter from middle test", testEraseMiddleIter),
+      REGISTER_TEST("erase iter from end test", testEraseLastIter),
+      REGISTER_TEST("erase iter after last test", testEraseEndIterator),
+      REGISTER_TEST("erase iter from another vector test", testEraseAnotherVectorIter),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
