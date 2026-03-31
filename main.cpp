@@ -676,8 +676,87 @@ bool testEraseRangeLhsMoreThanRhs()
 
 bool testInitializerList()
 {
-  topit::Vector< int > v = {1, 2, 3};
+  topit::Vector< int > v({1, 2, 3});
   return v.getSize() == 3 && v[0] == 1 && v[1] == 2 && v[2] == 3;
+}
+
+bool testIteratorDistance()
+{
+  topit::Vector< int > v;
+  for (int i = 0; i < 5; ++i)
+  {
+    v.pushBack(i);
+  }
+
+  auto itBegin = v.begin();
+  auto itEnd = v.end();
+
+  if ((itEnd - itBegin) != 5)
+  {
+    return false;
+  }
+
+  if ((itBegin - itEnd) != -5)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testIteratorSubscript()
+{
+  topit::Vector< int > v;
+  v.pushBack(10);
+  v.pushBack(20);
+  v.pushBack(30);
+
+  auto it = v.begin();
+
+  if (it[0] != 10 || it[2] != 30)
+  {
+    return false;
+  }
+
+  if (*it != 10)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testIteratorComparisons()
+{
+  topit::Vector< int > v;
+  for (int i = 0; i < 10; ++i)
+  {
+    v.pushBack(i);
+  }
+
+  auto it1 = v.begin() + 2;
+  auto it2 = v.begin() + 5;
+  auto it3 = v.begin() + 5;
+
+  if (!(it1 < it2))
+  {
+    return false;
+  }
+  if (!(it2 > it1))
+  {
+    return false;
+  }
+  if (!(it2 <= it3) || !(it2 >= it3))
+  {
+    return false;
+  }
+  if (it1 == it2)
+  {
+    return false;
+  }
+
+  it1 += 3;
+  return it1 == it2;
 }
 
 int main()
