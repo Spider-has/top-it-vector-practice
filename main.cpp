@@ -1040,7 +1040,7 @@ struct ThrowingType
   ThrowingType &operator=(const ThrowingType &other)
   {
     std::cout << other.val << "\n";
-    if (++count > 2)
+    if (++count > 5)
     {
       throw std::runtime_error("Copy limit exceeded");
     }
