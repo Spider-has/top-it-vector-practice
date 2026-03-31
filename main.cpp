@@ -833,6 +833,94 @@ bool testIteratorOverflow()
   }
 }
 
+bool testInsertMultipleCountInMiddle()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(5);
+
+  auto it = v.begin() + 2;
+  v.insert(it, 2, 100);
+
+  if (v.getSize() != 5)
+  {
+    return false;
+  }
+  if (v[2] != 100 || v[3] != 100 || v[4] != 5)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testInsertAtBegin()
+{
+  topit::Vector< int > v;
+  v.pushBack(10);
+
+  v.insert(v.begin(), 3, 7);
+
+  if (v.getSize() != 4)
+  {
+    return false;
+  }
+  if (v[0] != 7 || v[3] != 10)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testInsertAtEnd()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+
+  v.insert(v.end(), 2, 9);
+
+  if (v.getSize() != 3)
+  {
+    return false;
+  }
+  if (v[1] != 9 || v[2] != 9)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testInsertZeroCount()
+{
+  topit::Vector< int > v;
+  v.pushBack(42);
+
+  size_t oldSize = v.getSize();
+  v.insert(v.begin(), 0, 100);
+
+  return (v.getSize() == oldSize && v[0] == 42);
+}
+
+bool testInsertForeignIterator()
+{
+  topit::Vector< int > v1;
+  topit::Vector< int > v2;
+  v1.pushBack(1);
+  v2.pushBack(2);
+  try
+  {
+    v1.insert(v2.begin(), 1, 100);
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -885,6 +973,11 @@ int main()
       REGISTER_TEST("rnd access iter test item mutation in for range", testIteratorMutation),
       REGISTER_TEST("rnd access iter empty vector error", testIteratorEmptyVector),
       REGISTER_TEST("rnd access iter overflow error test", testIteratorOverflow),
+      REGISTER_TEST("insert count in the middle with iter test", testInsertMultipleCountInMiddle),
+      REGISTER_TEST("insert count in the begin with iter test", testInsertAtBegin),
+      REGISTER_TEST("insert count in the end with iter test", testInsertAtEnd),
+      REGISTER_TEST("insert count zero count with iter test", testInsertZeroCount),
+      REGISTER_TEST("insert count with foreign iterator test", testInsertForeignIterator),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
