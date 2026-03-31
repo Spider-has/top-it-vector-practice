@@ -1035,11 +1035,9 @@ struct ThrowingType
   ThrowingType(int v):
       val(v)
   {
-    std::cout << v << "\n";
   }
   ThrowingType &operator=(const ThrowingType &other)
   {
-    std::cout << other.val << "\n";
     if (++count > 5)
     {
       throw std::runtime_error("Copy limit exceeded");
@@ -1073,6 +1071,54 @@ bool testInsertRangeExceptionSafety()
   {
     return (v.getSize() == 2 && v[0].val == 1 && v[1].val == 2);
   }
+}
+
+bool testInsertInitializerListBasic()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(10);
+
+  v.insert(v.begin() + 1, {2, 3, 4});
+
+  if (v.getSize() != 5)
+  {
+    return false;
+  }
+  if (v[1] != 2 || v[2] != 3 || v[3] != 4 || v[4] != 10)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testInsertListIntoEmpty()
+{
+  topit::Vector< int > v;
+  v.insert(v.begin(), {100, 200});
+
+  return (v.getSize() == 2 && v[0] == 100 && v[1] == 200);
+}
+
+bool testInsertEmptyList()
+{
+  topit::Vector< int > v;
+  v.pushBack(42);
+
+  v.insert(v.end(), {});
+
+  return (v.getSize() == 1 && v[0] == 42);
+}
+
+bool testInsertListGrowth()
+{
+  topit::Vector< int > v;
+  v.insert(v.begin(), {1, 2});
+  v.insert(v.end(), {3, 4});
+  v.insert(v.begin() + 2, {10, 20, 30});
+
+  return (v.getSize() == 7 && v[2] == 10 && v[5] == 3);
 }
 
 int main()
@@ -1137,6 +1183,10 @@ int main()
       REGISTER_TEST("insert range for other vector with iters zero range", testInsertEmptyRange),
       REGISTER_TEST("insert range for other vector with iters to capacity", testInsertRangeExactlyToCapacity),
       REGISTER_TEST("insert range for other vector with iters with catching error", testInsertRangeExceptionSafety),
+      REGISTER_TEST("insert range for initializer list basic", testInsertInitializerListBasic),
+      REGISTER_TEST("insert range for initializer list to empty vector", testInsertListIntoEmpty),
+      REGISTER_TEST("insert range for empty initializer list", testInsertEmptyList),
+      REGISTER_TEST("insert range for initializer list multiple times", testInsertListGrowth),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
