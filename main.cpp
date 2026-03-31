@@ -759,6 +759,48 @@ bool testIteratorComparisons()
   return it1 == it2;
 }
 
+bool testRangeBasedFor()
+{
+  topit::Vector< int > v;
+  v.pushBack(10);
+  v.pushBack(20);
+  v.pushBack(30);
+
+  int sum = 0;
+  int count = 0;
+
+  for (auto x : v)
+  {
+    sum += x;
+    count++;
+  }
+
+  if (sum != 60)
+  {
+    return false;
+  }
+  if (count != 3)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testIteratorMutation()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+
+  for (auto &x : v)
+  {
+    x *= 10;
+  }
+
+  return v[0] == 10 && v[1] == 20;
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -804,6 +846,11 @@ int main()
       REGISTER_TEST("erase range of elements out of range", testEraseOutOfRange),
       REGISTER_TEST("erase range of elements lhs more than rhs", testEraseRangeLhsMoreThanRhs),
       REGISTER_TEST("erase initializer list contrustor", testInitializerList),
+      REGISTER_TEST("rnd access iter distance test", testIteratorDistance),
+      REGISTER_TEST("rnd access to diff elems test", testIteratorSubscript),
+      REGISTER_TEST("rnd access all type of comprasions test", testIteratorComparisons),
+      REGISTER_TEST("rnd access iter range for test", testRangeBasedFor),
+      REGISTER_TEST("rnd access iter test item mutation in for range", testIteratorMutation),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
