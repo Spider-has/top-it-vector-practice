@@ -81,6 +81,9 @@ namespace topit
     static T *createCopy(T *start, const T *end, size_t cap);
     void rangeInsertion(size_t i, const T *rhs, size_t from, size_t to);
     void rangeErasing(size_t from, size_t to);
+    size_t calcCapacity(size_t diff);
+    static T *fill(T *start, const T *end, const T &val);
+    void assignWithLocal(T *data, size_t new_size, size_t new_cap);
 
     T *data_;
     size_t size_, cap_;
@@ -217,6 +220,15 @@ namespace topit
     return to;
   }
 
+  template < class T > T *Vector< T >::fill(T *start, const T *end, const T &val)
+  {
+    for (; start != end; ++start)
+    {
+      *start = val;
+    }
+    return start;
+  }
+
   template < class T > T *Vector< T >::createCopy(T *start, const T *end, size_t cap)
   {
     T *new_data = new T[cap];
@@ -276,20 +288,30 @@ namespace topit
     rangeInsertion(i, &val, 0, 1);
   }
 
+  template < class T > size_t Vector< T >::calcCapacity(size_t diff)
+  {
+    return size_ + diff < cap_ ? cap_ : std::max((size_ + diff) * 2, cap_ * 2);
+  }
+
+  template < class T > void Vector< T >::assignWithLocal(T *data, size_t new_size, size_t new_cap)
+  {
+    delete[] data_;
+    data_ = data;
+    size_ = new_size;
+    cap_ = new_cap;
+  }
+
   template < class T > void Vector< T >::rangeInsertion(size_t i, const T *rhs, size_t from, size_t to)
   {
 
     size_t diff = to - from;
-    size_t newCapacity = size_ + diff < cap_ ? cap_ : std::max((size_ + diff) * 2, cap_ * 2);
+    size_t newCapacity = calcCapacity(diff);
     T *new_data = createCopy(data_, data_ + i, newCapacity);
     try
     {
       copyTo(const_cast< T * >(rhs + from), rhs + to, new_data + i);
       copyTo(data_ + i, data_ + size_, new_data + i + diff);
-      delete[] data_;
-      data_ = new_data;
-      size_ += diff;
-      cap_ = newCapacity;
+      assignWithLocal(new_data, size_ + diff, newCapacity);
     }
     catch (...)
     {
@@ -317,6 +339,28 @@ namespace topit
 
   template < class T > void Vector< T >::insert(RAIter< T > pos, size_t count, const T &value)
   {
+    if (pos.curr_ != this)
+    {
+      throw std::runtime_error("can't insert count in pos of another vector, pos must refer to the current vector");
+    }
+    if (!count)
+    {
+      return;
+    }
+    size_t new_cap = calcCapacity(count);
+    T *new_data = createCopy(data_, data_ + pos.i_, new_cap);
+    try
+    {
+      fill(new_data + pos.i_, new_data + pos.i_ + count, value);
+      copyTo(data_ + pos.i_, data_ + size_, new_data + pos.i_ + count);
+
+      assignWithLocal(new_data, size_ + count, new_cap);
+    }
+    catch (...)
+    {
+      delete[] new_data;
+      throw;
+    }
   }
 
   template < class T > void Vector< T >::insert(RAIter< T > pos, RAIter< T > begin, RAIter< T > end)
