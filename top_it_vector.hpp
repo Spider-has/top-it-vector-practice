@@ -10,7 +10,6 @@
 #include "random_access_iter.hpp"
 
 // homework
-// TODO:: random access iters для вектора
 // TODO:: insert erase with iterators по 3 штуки
 // TODO:: + тесты
 
@@ -50,6 +49,10 @@ namespace topit
     void insert(size_t i, const T &val);
     void insert(size_t i, const Vector< T > &rhs, size_t from, size_t to);
 
+    void insert(RAIter< T > pos, size_t count, const T &value);
+    void insert(RAIter< T > pos, RAIter< T > begin, RAIter< T > end);
+    void insert(RAIter< T > pos, std::initializer_list< T > il);
+
     void erase(size_t i);
     void erase(size_t from, size_t to);
 
@@ -74,8 +77,10 @@ namespace topit
     RAIter< T > end();
 
   private:
-    static T *copyTo(T *start, T *end, T *to);
-    static T *createCopy(T *start, T *end, size_t cap);
+    static T *copyTo(T *start, const T *end, T *to);
+    static T *createCopy(T *start, const T *end, size_t cap);
+    void rangeInsertion(size_t i, const T *rhs, size_t from, size_t to);
+    void rangeErasing(size_t from, size_t to);
 
     T *data_;
     size_t size_, cap_;
@@ -202,7 +207,7 @@ namespace topit
     swap(cpy); //  SWAAAAAP NOOOOEXXCEEPT!!!!!!
   }
 
-  template < class T > T *Vector< T >::copyTo(T *start, T *end, T *to)
+  template < class T > T *Vector< T >::copyTo(T *start, const T *end, T *to)
   {
     for (; start != end; ++start, ++to)
     {
@@ -212,7 +217,7 @@ namespace topit
     return to;
   }
 
-  template < class T > T *Vector< T >::createCopy(T *start, T *end, size_t cap)
+  template < class T > T *Vector< T >::createCopy(T *start, const T *end, size_t cap)
   {
     T *new_data = new T[cap];
     try
@@ -268,16 +273,23 @@ namespace topit
     {
       throw std::runtime_error("cant't insert element out of array size");
     }
-    size_t newCapacity = size_ + 1 < cap_ ? cap_ : std::max((size_ + 1) * 2, cap_ * 2);
+    rangeInsertion(i, &val, 0, 1);
+  }
+
+  template < class T > void Vector< T >::rangeInsertion(size_t i, const T *rhs, size_t from, size_t to)
+  {
+
+    size_t diff = to - from;
+    size_t newCapacity = size_ + diff < cap_ ? cap_ : std::max((size_ + diff) * 2, cap_ * 2);
     T *new_data = createCopy(data_, data_ + i, newCapacity);
     try
     {
-      new_data[i] = val;
-      copyTo(data_ + i, data_ + size_, new_data + i + 1);
+      copyTo(const_cast< T * >(rhs + from), rhs + to, new_data + i);
+      copyTo(data_ + i, data_ + size_, new_data + i + diff);
       delete[] data_;
       data_ = new_data;
+      size_ += diff;
       cap_ = newCapacity;
-      size_++;
     }
     catch (...)
     {
@@ -300,57 +312,23 @@ namespace topit
     {
       throw std::runtime_error("can't insert elements out of range in rhs array");
     }
-
-    size_t diff = to - from;
-    size_t newCapacity = size_ + diff < cap_ ? cap_ : std::max((size_ + diff) * 2, cap_ * 2);
-    T *new_data = createCopy(data_, data_ + i, newCapacity);
-    try
-    {
-      copyTo(rhs.data_ + from, rhs.data_ + to, new_data + i);
-      copyTo(data_ + i, data_ + size_, new_data + i + diff);
-      delete[] data_;
-      data_ = new_data;
-      size_ += diff;
-      cap_ = newCapacity;
-    }
-    catch (...)
-    {
-      delete[] new_data;
-      throw;
-    }
+    rangeInsertion(i, rhs.data_, from, to);
   }
 
-  template < class T > void Vector< T >::erase(size_t i)
+  template < class T > void Vector< T >::insert(RAIter< T > pos, size_t count, const T &value)
   {
-    if (i >= size_)
-    {
-      throw std::runtime_error("can't erase element out of array size");
-    }
-    T *new_data = createCopy(data_, data_ + i, cap_);
-    try
-    {
-      copyTo(data_ + i + 1, data_ + size_, new_data + i);
-      delete[] data_;
-      data_ = new_data;
-      --size_;
-    }
-    catch (...)
-    {
-      delete[] new_data;
-      throw;
-    }
   }
 
-  template < class T > void Vector< T >::erase(size_t from, size_t to)
+  template < class T > void Vector< T >::insert(RAIter< T > pos, RAIter< T > begin, RAIter< T > end)
   {
-    if (from >= size_ || to > size_)
-    {
-      throw std::runtime_error("can't erase elements out of range in rhs array");
-    }
-    if (from > to)
-    {
-      throw std::runtime_error("can't erase elements range: lhs more than rhs");
-    }
+  }
+
+  template < class T > void Vector< T >::insert(RAIter< T > pos, std::initializer_list< T > il)
+  {
+  }
+
+  template < class T > void Vector< T >::rangeErasing(size_t from, size_t to)
+  {
     size_t diff = to - from;
     T *new_data = createCopy(data_, data_ + from, cap_);
     try
@@ -365,6 +343,28 @@ namespace topit
       delete[] new_data;
       throw;
     }
+  }
+
+  template < class T > void Vector< T >::erase(size_t i)
+  {
+    if (i >= size_)
+    {
+      throw std::runtime_error("can't erase element out of array size");
+    }
+    rangeErasing(i, i + 1);
+  }
+
+  template < class T > void Vector< T >::erase(size_t from, size_t to)
+  {
+    if (from >= size_ || to > size_)
+    {
+      throw std::runtime_error("can't erase elements out of range in rhs array");
+    }
+    if (from > to)
+    {
+      throw std::runtime_error("can't erase elements range: lhs more than rhs");
+    }
+    rangeErasing(from, to);
   }
 
   template < class T > T &Vector< T >::operator[](size_t index) noexcept
