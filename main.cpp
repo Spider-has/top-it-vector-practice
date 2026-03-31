@@ -959,7 +959,7 @@ bool testInsertSelfRange()
   {
     return false;
   }
-  if (v[3] != 1 || v[4] != 2 || v[2] != 5)
+  if (v[3] != 1 || v[4] != 2 || v[2] != 3)
   {
     return false;
   }
@@ -1035,15 +1035,17 @@ struct ThrowingType
   ThrowingType(int v):
       val(v)
   {
-    count = 0;
+    std::cout << v << "\n";
   }
-  ThrowingType(const ThrowingType &other)
+  ThrowingType &operator=(const ThrowingType &other)
   {
+    std::cout << other.val << "\n";
     if (++count > 2)
     {
       throw std::runtime_error("Copy limit exceeded");
     }
     val = other.val;
+    return *this;
   }
 };
 
