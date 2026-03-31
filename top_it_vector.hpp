@@ -55,6 +55,7 @@ namespace topit
 
     void erase(size_t i);
     void erase(size_t from, size_t to);
+    void erase(RAIter< T > first, RAIter< T > last);
 
     void swap(Vector< T > &rhs) noexcept;
 
@@ -365,7 +366,7 @@ namespace topit
 
   template < class T > void Vector< T >::insert(RAIter< T > pos, RAIter< T > begin_it, RAIter< T > end_it)
   {
-    if (begin_it.getPtr() != begin_it.getPtr())
+    if (begin_it.getPtr() != end_it.getPtr())
     {
       throw std::runtime_error("can't intsert range from diff vector begin and end iters");
     }
@@ -445,6 +446,23 @@ namespace topit
       throw std::runtime_error("can't erase elements range: lhs more than rhs");
     }
     rangeErasing(from, to);
+  }
+
+  template < class T > void Vector< T >::erase(RAIter< T > first, RAIter< T > last)
+  {
+    if (first.getPtr() != last.getPtr())
+    {
+      throw std::runtime_error("can't intsert range from diff vector begin and end iters");
+    }
+    if (first > last)
+    {
+      throw std::runtime_error("can't insert elems when begin iter more than end iter");
+    }
+    if (first == last)
+    {
+      return;
+    }
+    rangeErasing(first.i_, last.i_);
   }
 
   template < class T > T &Vector< T >::operator[](size_t index) noexcept
