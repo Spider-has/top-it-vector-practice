@@ -1121,6 +1121,95 @@ bool testInsertListGrowth()
   return (v.getSize() == 7 && v[2] == 10 && v[5] == 3);
 }
 
+bool testEraseRangeMiddle()
+{
+  topit::Vector< int > v;
+  for (int i = 0; i < 6; ++i)
+  {
+    v.pushBack(i);
+  }
+
+  auto it1 = v.begin() + 1;
+  auto it2 = v.begin() + 4;
+  v.erase(it1, it2);
+
+  if (v.getSize() != 3)
+  {
+    return false;
+  }
+  if (v[0] != 0 || v[1] != 4 || v[2] != 5)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testEraseToTheEnd()
+{
+  topit::Vector< int > v;
+  v.pushBack(10);
+  v.pushBack(20);
+  v.pushBack(30);
+
+  v.erase(v.begin() + 1, v.end());
+
+  return (v.getSize() == 1 && v[0] == 10);
+}
+
+bool testEraseAll()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(3);
+
+  v.erase(v.begin(), v.end());
+
+  return (v.getSize() == 0);
+}
+
+bool testEraseEmptyRange()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+
+  auto it = v.begin() + 1;
+  v.erase(it, it);
+
+  return (v.getSize() == 2 && v[0] == 1 && v[1] == 2);
+}
+
+bool testEraseInvalidRange()
+{
+  topit::Vector< int > v1;
+  topit::Vector< int > v2;
+  v1.pushBack(1);
+  v2.pushBack(2);
+
+  try
+  {
+    v1.erase(v1.begin(), v2.end());
+    return false;
+  }
+  catch (const std::runtime_error &)
+  {
+    return true;
+  }
+
+  try
+  {
+
+    v1.erase(v1.begin() + 1, v1.begin());
+    return false;
+  }
+  catch (const std::runtime_error &)
+  {
+    return true;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -1187,6 +1276,11 @@ int main()
       REGISTER_TEST("insert range for initializer list to empty vector", testInsertListIntoEmpty),
       REGISTER_TEST("insert range for empty initializer list", testInsertEmptyList),
       REGISTER_TEST("insert range for initializer list multiple times", testInsertListGrowth),
+      REGISTER_TEST("erase range from middle test iters", testEraseRangeMiddle),
+      REGISTER_TEST("erase range from pos to end test iters", testEraseToTheEnd),
+      REGISTER_TEST("erase range all elems test iters`", testEraseAll),
+      REGISTER_TEST("erase range empty test iters", testEraseEmptyRange),
+      REGISTER_TEST("erase range with invalid iterators test", testEraseInvalidRange),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
