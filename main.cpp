@@ -801,6 +801,38 @@ bool testIteratorMutation()
   return v[0] == 10 && v[1] == 20;
 }
 
+bool testIteratorEmptyVector()
+{
+  topit::Vector< int > v;
+  auto it = v.begin();
+
+  try
+  {
+    *it = 10;
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
+bool testIteratorOverflow()
+{
+  topit::Vector< int > v;
+  auto it = v.begin();
+
+  try
+  {
+    it[10] = 10;
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -851,6 +883,8 @@ int main()
       REGISTER_TEST("rnd access all type of comprasions test", testIteratorComparisons),
       REGISTER_TEST("rnd access iter range for test", testRangeBasedFor),
       REGISTER_TEST("rnd access iter test item mutation in for range", testIteratorMutation),
+      REGISTER_TEST("rnd access iter empty vector error", testIteratorEmptyVector),
+      REGISTER_TEST("rnd access iter overflow error test", testIteratorOverflow),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
