@@ -55,8 +55,9 @@ namespace topit
 
     void erase(size_t i);
     void erase(size_t from, size_t to);
-    void erase(RAIter< T > first, RAIter< T > last);
-    void erase(RAIter< T > pos);
+    RAIter< T > erase(RAIter< T > first, RAIter< T > last);
+    RAIter< T > erase(RAIter< T > pos);
+    template < class K > void eraseIf(RAIter< T > first, RAIter< T >, K k);
 
     void swap(Vector< T > &rhs) noexcept;
 
@@ -449,7 +450,7 @@ namespace topit
     rangeErasing(from, to);
   }
 
-  template < class T > void Vector< T >::erase(RAIter< T > first, RAIter< T > last)
+  template < class T > RAIter< T > Vector< T >::erase(RAIter< T > first, RAIter< T > last)
   {
     if (first.getPtr() != last.getPtr())
     {
@@ -463,17 +464,20 @@ namespace topit
     {
       return;
     }
+    size_t last_pos = last.i_ - (first.i_ - last.i_);
     rangeErasing(first.i_, last.i_);
+    return RAIter< T >(this, last_pos);
   }
 
-  template < class T > void Vector< T >::erase(RAIter< T > pos)
+  template < class T > RAIter< T > Vector< T >::erase(RAIter< T > pos)
   {
     if (pos.getPtr() != this)
     {
       throw std::runtime_error("can't erase: iterator refers to another vector");
     }
-
+    size_t last_pos = pos.i_;
     erase(pos.i_);
+    return RAIter< T >(this, last_pos);
   }
 
   template < class T > T &Vector< T >::operator[](size_t index) noexcept
