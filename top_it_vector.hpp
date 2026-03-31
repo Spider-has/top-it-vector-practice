@@ -339,7 +339,7 @@ namespace topit
 
   template < class T > void Vector< T >::insert(RAIter< T > pos, size_t count, const T &value)
   {
-    if (pos.curr_ != this)
+    if (pos.getPtr() != this)
     {
       throw std::runtime_error("can't insert count in pos of another vector, pos must refer to the current vector");
     }
@@ -365,7 +365,7 @@ namespace topit
 
   template < class T > void Vector< T >::insert(RAIter< T > pos, RAIter< T > begin_it, RAIter< T > end_it)
   {
-    if (begin_it.curr_ != end_it.curr_)
+    if (begin_it.getPtr() != begin_it.getPtr())
     {
       throw std::runtime_error("can't intsert range from diff vector begin and end iters");
     }
@@ -377,9 +377,9 @@ namespace topit
     {
       throw std::runtime_error("can't insert elems after vector end");
     }
-    size_t from = begin_it - begin_it.curr_->begin();
-    size_t to = end_it - begin_it.curr_->begin();
-    rangeInsertion(pos.i_, begin_it.curr_->data_, from, to);
+    size_t from = begin_it - begin_it.getPtr()->begin();
+    size_t to = end_it - begin_it.getPtr()->begin();
+    rangeInsertion(pos.i_, begin_it.getPtr()->data_, from, to);
   }
 
   template < class T > void Vector< T >::insert(RAIter< T > pos, std::initializer_list< T > il)

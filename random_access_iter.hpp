@@ -43,6 +43,10 @@ namespace topit
         i_(i)
     {
     }
+    Vector< T > *getPtr() noexcept
+    {
+      return curr_;
+    }
     Vector< T > *curr_;
     size_t i_;
   };
