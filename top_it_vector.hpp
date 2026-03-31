@@ -373,9 +373,9 @@ namespace topit
     {
       throw std::runtime_error("can't insert elems when begin iter more than end iter");
     }
-    if (pos > end())
+    if (begin_it == end_it)
     {
-      throw std::runtime_error("can't insert elems after vector end");
+      return;
     }
     size_t from = begin_it - begin_it.getPtr()->begin();
     size_t to = end_it - begin_it.getPtr()->begin();
@@ -384,6 +384,27 @@ namespace topit
 
   template < class T > void Vector< T >::insert(RAIter< T > pos, std::initializer_list< T > il)
   {
+    if (!il.size())
+    {
+      return;
+    }
+    size_t newCap = calcCapacity(il.size());
+    T *new_d = createCopy(data_, data_ + pos.i_, newCap);
+    try
+    {
+      size_t i = pos.i_;
+      for (const auto &item : il)
+      {
+        new_d[i++] = item;
+      }
+      copyTo(data_ + pos.i_, data_ + size_, new_d + i);
+      assignWithLocal(new_d, size_ + il.size(), newCap);
+    }
+    catch (...)
+    {
+      delete[] new_d;
+      throw;
+    }
   }
 
   template < class T > void Vector< T >::rangeErasing(size_t from, size_t to)
