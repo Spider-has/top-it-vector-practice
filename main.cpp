@@ -921,6 +921,158 @@ bool testInsertForeignIterator()
   }
 }
 
+bool testInsertRangeFromOtherVector()
+{
+  topit::Vector< int > v1;
+  v1.pushBack(1);
+  v1.pushBack(2);
+  v1.pushBack(5);
+
+  topit::Vector< int > v2;
+  v2.pushBack(100);
+  v2.pushBack(200);
+
+  v1.insert(v1.begin() + 2, v2.begin(), v2.end());
+
+  if (v1.getSize() != 5)
+  {
+    return false;
+  }
+  if (v1[2] != 100 || v1[3] != 200 || v1[4] != 5)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testInsertSelfRange()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(3);
+
+  v.insert(v.end(), v.begin(), v.begin() + 2);
+
+  if (v.getSize() != 5)
+  {
+    return false;
+  }
+  if (v[3] != 1 || v[4] != 2 || v[2] != 5)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testInsertEmptyRange()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+
+  topit::Vector< int > vEmpty;
+  size_t oldSize = v.getSize();
+  size_t oldCap = v.getCapacity();
+
+  v.insert(v.begin() + 1, vEmpty.begin(), vEmpty.end());
+
+  return (v.getSize() == oldSize && v[0] == 1 && v[1] == 2);
+}
+
+bool testInsertSelfRangeOverlap()
+{
+  topit::Vector< int > v;
+  v.pushBack(10);
+  v.pushBack(20);
+  v.pushBack(30);
+
+  v.insert(v.begin() + 1, v.begin(), v.begin() + 2);
+
+  if (v.getSize() != 5)
+  {
+    return false;
+  }
+  if (v[0] != 10 || v[1] != 10 || v[2] != 20 || v[3] != 20 || v[4] != 30)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool testInsertRangeExactlyToCapacity()
+{
+  topit::Vector< int > v;
+  v.reserve(10);
+  for (int i = 0; i < 5; ++i)
+  {
+    v.pushBack(i);
+  }
+
+  topit::Vector< int > additional;
+  for (int i = 0; i < 5; ++i)
+  {
+    additional.pushBack(100);
+  }
+
+  v.insert(v.end(), additional.begin(), additional.end());
+
+  return (v.getSize() == 10 && v[9] == 100);
+}
+
+struct ThrowingType
+{
+  static int count;
+  int val;
+  ThrowingType():
+      val(0)
+  {
+    count = 0;
+  }
+  ThrowingType(int v):
+      val(v)
+  {
+    count = 0;
+  }
+  ThrowingType(const ThrowingType &other)
+  {
+    if (++count > 2)
+    {
+      throw std::runtime_error("Copy limit exceeded");
+    }
+    val = other.val;
+  }
+};
+
+int ThrowingType::count = 0;
+
+bool testInsertRangeExceptionSafety()
+{
+  topit::Vector< ThrowingType > v;
+  v.pushBack(ThrowingType(1));
+  v.pushBack(ThrowingType(2));
+
+  topit::Vector< ThrowingType > src;
+  for (int i = 0; i < 5; ++i)
+  {
+    src.pushBack(ThrowingType(100));
+  }
+
+  ThrowingType::count = 0;
+  try
+  {
+    v.insert(v.begin() + 1, src.begin(), src.end());
+    return false;
+  }
+  catch (...)
+  {
+    return (v.getSize() == 2 && v[0].val == 1 && v[1].val == 2);
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -978,6 +1130,11 @@ int main()
       REGISTER_TEST("insert count in the end with iter test", testInsertAtEnd),
       REGISTER_TEST("insert count zero count with iter test", testInsertZeroCount),
       REGISTER_TEST("insert count with foreign iterator test", testInsertForeignIterator),
+      REGISTER_TEST("insert range for other vector with iters", testInsertRangeFromOtherVector),
+      REGISTER_TEST("insert range for it self vector with iters", testInsertSelfRange),
+      REGISTER_TEST("insert range for other vector with iters zero range", testInsertEmptyRange),
+      REGISTER_TEST("insert range for other vector with iters to capacity", testInsertRangeExactlyToCapacity),
+      REGISTER_TEST("insert range for other vector with iters with catching error", testInsertRangeExceptionSafety),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
