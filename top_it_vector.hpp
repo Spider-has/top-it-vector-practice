@@ -25,6 +25,8 @@ namespace topit
 
     Vector(size_t size);
 
+    Vector(const Vector< T > &rhs, size_t capacity);
+
     Vector< T > &operator=(const Vector< T > &rhs);
     Vector< T > &operator=(Vector< T > &&rhs) noexcept;
 
@@ -38,8 +40,6 @@ namespace topit
     size_t getSize() const noexcept;
     size_t getCapacity() const noexcept;
 
-    void pushBack(const T &val);
-
     void popBack();
 
     void insert(size_t i, const T &val);
@@ -48,6 +48,9 @@ namespace topit
     void insert(RAIter< T > pos, size_t count, const T &value);
     void insert(RAIter< T > pos, RAIter< T > begin, RAIter< T > end);
     void insert(RAIter< T > pos, std::initializer_list< T > il);
+
+    // template < class VectorIterator, class FwdIterator >
+    // void insert(VectorIterator pos, FwdIterator begin, FwdIterator end);
 
     void erase(size_t i);
     void erase(size_t from, size_t to);
@@ -59,16 +62,13 @@ namespace topit
 
     void changeVectorInSomeWay();
 
-    // example
-    struct VectorIterator
-    {
-    };
-    template < class FwdIterator > void insert(VectorIterator pos, FwdIterator begin, FwdIterator end);
+    void pushBack(const T &val);
 
     void pushBackCount(size_t k, const T &val);
     void unsafePushBack(size_t k, const T &val);
-    // example
-    template < class IT > void pushBackRange(IT start, IT end);
+
+    template < class IT > void pushBackRange(IT start, size_t count);
+
     void reserve(size_t new_cap);
     void shrinkToFit();
     void shrinkToFit(size_t size);
@@ -136,8 +136,19 @@ namespace topit
   Vector< T >::Vector(size_t size):
       data_(size ? new T[size] : nullptr),
       size_(size),
-      cap_((size))
+      cap_(size)
   {
+  }
+
+  template < class T >
+  Vector< T >::Vector(const Vector< T > &rhs, size_t capacity):
+      Vector(capacity)
+  {
+    for (size_t i = 0, end = rhs.getSize(); i < end; ++i)
+    {
+      data_[i] = rhs[i];
+    }
+    size_ = rhs.getSize();
   }
 
   template < class T >
@@ -335,6 +346,11 @@ namespace topit
       throw std::runtime_error("can't insert elements out of range in rhs array");
     }
     rangeInsertion(i, rhs.data_, from, to);
+  }
+
+  template < class VectorIterator, class FwdIterator >
+  void insert(VectorIterator pos, FwdIterator begin, FwdIterator end)
+  {
   }
 
   template < class T > void Vector< T >::insert(RAIter< T > pos, size_t count, const T &value)
@@ -561,10 +577,31 @@ namespace topit
 
   template < class T > void Vector< T >::pushBackCount(size_t k, const T &val)
   {
+    if (!k)
+    {
+      throw std::logic_error("can't push back zero elements");
+    }
+
+    size_t new_cap = calcCapacity(k);
+    T *new_data = createCopy(data_, data_ + size_, new_cap);
+    try
+    {
+      new_data;
+    }
+    catch (...)
+    {
+      delete new_data;
+      throw;
+    }
   }
 
   template < class T > void Vector< T >::unsafePushBack(size_t k, const T &val)
   {
+    for (size_t i = 0; i < k; ++i)
+    {
+      data_[i + size_] = val;
+    }
+    size_ += k;
   }
 
   template < class T > void Vector< T >::reserve(size_t new_cap)
