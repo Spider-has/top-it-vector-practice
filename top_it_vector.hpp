@@ -582,17 +582,9 @@ namespace topit
       throw std::logic_error("can't push back zero elements");
     }
 
-    size_t new_cap = calcCapacity(k);
-    T *new_data = createCopy(data_, data_ + size_, new_cap);
-    try
-    {
-      new_data;
-    }
-    catch (...)
-    {
-      delete new_data;
-      throw;
-    }
+    Vector< T > new_vec{*this, calcCapacity(k)};
+    new_vec.unsafePushBack(k, val);
+    swap(new_vec);
   }
 
   template < class T > void Vector< T >::unsafePushBack(size_t k, const T &val)
