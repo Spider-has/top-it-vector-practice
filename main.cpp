@@ -1376,6 +1376,30 @@ bool testEraseIfStringLength()
   return (v.getSize() == 2 && v[1] == "dog");
 }
 
+bool testReserveCapacity()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(3);
+
+  v.reserve(20);
+
+  return (v.getSize() == 3 && v[0] == 1 && v[1] == 2 && v[2] == 3 && v.getCapacity() == 20);
+}
+
+bool testReserveCapacityLower()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(3);
+
+  v.reserve(3);
+
+  return (v.getSize() == 3 && v[0] == 1 && v[1] == 2 && v[2] == 3 && v.getCapacity() == 4);
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -1457,6 +1481,8 @@ int main()
       REGISTER_TEST("erase if even elems, begin to end, erasing all test", testEraseIfAllMatch),
       REGISTER_TEST("erase if even elems, middle test", testEraseIfRangeOnly),
       REGISTER_TEST("erase if even elems, begin to end, strings test", testEraseIfStringLength),
+      REGISTER_TEST("reserve capacity bigger than now test", testReserveCapacity),
+      REGISTER_TEST("reserve capacity lower than now test", testReserveCapacityLower),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
