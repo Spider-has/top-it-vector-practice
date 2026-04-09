@@ -585,14 +585,23 @@ namespace topit
     size_ += k;
   }
 
-  // template < class T > template < class IT > void Vector< T >::pushBackRange(IT start, size_t c)
-  // {
-  //   size_t c = 0;
-  //   for (auto it = b; it !+e; ++it, ++c)
-  //   {
-  //     // Если памяти не хватает на c -- далаем так, чтобы хватило и добавляем в конец.
-  //   }
-  // }
+  template < class T > template < class IT > void Vector< T >::pushBackRange(IT start, size_t c)
+  {
+    if (!c)
+    {
+      throw std::logic_error("can't push back zero elements range");
+    }
+    Vector< T > new_vec{*this, calcCapacity(c)};
+
+    size_t i = 0;
+    size_t size = new_vec.getSize();
+    for (auto it = start; i < c; ++it, ++i)
+    {
+      new_vec[size + i] = *it;
+    }
+    new_vec.size_ += c;
+    swap(new_vec);
+  }
 
   template < class T > void Vector< T >::reserve(size_t new_cap)
   {
