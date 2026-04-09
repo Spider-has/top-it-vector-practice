@@ -1465,6 +1465,39 @@ bool testPushBackCountZeroCount()
   }
 }
 
+bool testPushBackRangeNormal()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  int arr[] = {2, 3, 4};
+  v.pushBackRange(arr, 3);
+
+  return v.getSize() == 4 && v[1] == 2 && v[3] == 4;
+}
+
+bool testPushBackRangeZeroCount()
+{
+  topit::Vector< int > v;
+  int arr[] = {1, 2};
+  try
+  {
+    v.pushBackRange(arr, 0);
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
+bool testPushBackCountToEmptyVector()
+{
+  topit::Vector< int > v;
+  v.pushBackCount(2, 42);
+
+  return v.getSize() == 2 && v[0] == 42 && v[1] == 42;
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -1552,6 +1585,9 @@ int main()
       REGISTER_TEST("constructor vector copy with capacity test", testVectorWithCapacityConstructor),
       REGISTER_TEST("push back count test", testPushBackCount),
       REGISTER_TEST("push back count zero count test", testPushBackCountZeroCount),
+      REGISTER_TEST("push back count in empty vec test", testPushBackCountToEmptyVector),
+      REGISTER_TEST("push back range normal with static array test", testPushBackRangeNormal),
+      REGISTER_TEST("push back range zero count test", testPushBackRangeZeroCount),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
