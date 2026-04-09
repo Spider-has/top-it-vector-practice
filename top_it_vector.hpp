@@ -144,11 +144,11 @@ namespace topit
   Vector< T >::Vector(const Vector< T > &rhs, size_t capacity):
       Vector(capacity)
   {
+    size_ = 0;
     for (size_t i = 0, end = rhs.getSize(); i < end; ++i)
     {
-      data_[i] = rhs[i];
+      data_[size_++] = rhs[i];
     }
-    size_ = rhs.getSize();
   }
 
   template < class T >
@@ -253,32 +253,6 @@ namespace topit
       throw;
     }
     return new_data;
-  }
-
-  template < class T > void Vector< T >::pushBack(const T &val)
-  {
-    if (size_ >= cap_)
-    {
-      size_t new_cap = cap_ ? cap_ * 2 : 1;
-      T *new_arr = createCopy(data_, data_ + size_, new_cap);
-      try
-      {
-        new_arr[size_] = val;
-      }
-      catch (...)
-      {
-        delete[] new_arr;
-        throw;
-      }
-      cap_ = new_cap;
-      delete[] data_;
-      data_ = new_arr;
-    }
-    else
-    {
-      data_[size_] = val;
-    }
-    size_++;
   }
 
   template < class T > void Vector< T >::popBack()
@@ -575,6 +549,21 @@ namespace topit
     return !(lhs == rhs);
   }
 
+  template < class T > void Vector< T >::pushBack(const T &val)
+  {
+    if (size_ >= cap_)
+    {
+      Vector< T > new_vec{*this, cap_ ? cap_ * 2 : 1};
+      new_vec.unsafePushBack(1, val);
+      swap(new_vec);
+    }
+    else
+    {
+      data_[size_] = val;
+      size_++;
+    }
+  }
+
   template < class T > void Vector< T >::pushBackCount(size_t k, const T &val)
   {
     if (!k)
@@ -595,6 +584,15 @@ namespace topit
     }
     size_ += k;
   }
+
+  // template < class T > template < class IT > void Vector< T >::pushBackRange(IT start, size_t c)
+  // {
+  //   size_t c = 0;
+  //   for (auto it = b; it !+e; ++it, ++c)
+  //   {
+  //     // Если памяти не хватает на c -- далаем так, чтобы хватило и добавляем в конец.
+  //   }
+  // }
 
   template < class T > void Vector< T >::reserve(size_t new_cap)
   {
@@ -617,15 +615,6 @@ namespace topit
       cap_ = size_;
     }
   }
-
-  // template < class T > template < class IT > void Vector< T >::pushBackRange(IT start, size_t c)
-  // {
-  //   size_t c = 0;
-  //   for (auto it = b; it !+e; ++it, ++c)
-  //   {
-  //     // Если памяти не хватает на c -- далаем так, чтобы хватило и добавляем в конец.
-  //   }
-  // }
 
   template < class T > RAIter< T > Vector< T >::begin()
   {
