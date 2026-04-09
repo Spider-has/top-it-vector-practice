@@ -69,7 +69,8 @@ namespace topit
     void unsafePushBack(size_t k, const T &val);
     // example
     template < class IT > void pushBackRange(IT start, IT end);
-    void reserve(size_t size);
+    void reserve(size_t new_cap);
+    void shrinkToFit();
     void shrinkToFit(size_t size);
 
     RAIter< T > begin();
@@ -566,7 +567,6 @@ namespace topit
   {
   }
 
-  // TODO:: Домашка сделать резерв и shrink
   template < class T > void Vector< T >::reserve(size_t new_cap)
   {
     if (cap_ < new_cap)
@@ -578,8 +578,15 @@ namespace topit
     }
   }
 
-  void shrinkToFit(size_t size)
+  template < class T > void Vector< T >::shrinkToFit()
   {
+    if (cap_ > size_)
+    {
+      T *new_data = createCopy(data_, data_ + size_, cap_);
+      delete[] data_;
+      data_ = new_data;
+      cap_ = size_;
+    }
   }
 
   // template < class T > template < class IT > void Vector< T >::pushBackRange(IT start, size_t c)
