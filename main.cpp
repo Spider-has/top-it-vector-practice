@@ -1427,6 +1427,44 @@ bool testVectorWithCapacityConstructor()
   return (v.getSize() == 4 && v[0] == 1 && v[1] == 2 && v[2] == 3 && v[3] == 4 && v.getCapacity() == 4 &&
           v2.getCapacity() == 16 && v2.getSize() == 4 && v == v2);
 }
+
+bool testPushBackCount()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(3);
+  v.pushBack(4);
+
+  v.pushBackCount(5, 100);
+
+  for (size_t i = 0; i < 5; ++i)
+  {
+    if (v[4 + i] != 100)
+    {
+      return false;
+    }
+  }
+  return (v.getSize() == 9 && v[0] == 1 && v[1] == 2 && v[2] == 3 && v[3] == 4);
+}
+
+bool testPushBackCountZeroCount()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+
+  try
+  {
+    v.pushBackCount(0, 100);
+    return false;
+  }
+  catch (...)
+  {
+    return true;
+  }
+}
+
 int main()
 {
   using namespace prettyOut;
@@ -1512,6 +1550,8 @@ int main()
       REGISTER_TEST("reserve capacity lower than now test", testReserveCapacityLower),
       REGISTER_TEST("shrink to fit capacity test", testShrinkCapacity),
       REGISTER_TEST("constructor vector copy with capacity test", testVectorWithCapacityConstructor),
+      REGISTER_TEST("push back count test", testPushBackCount),
+      REGISTER_TEST("push back count zero count test", testPushBackCountZeroCount),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
