@@ -841,7 +841,8 @@ bool testInsertMultipleCountInMiddle()
   v.pushBack(5);
 
   auto it = v.begin() + 2;
-  v.insert(it, 2, 100);
+  const int val = 100;
+  v.insert(it, 2, val);
 
   if (v.getSize() != 5)
   {
@@ -975,7 +976,6 @@ bool testInsertEmptyRange()
 
   topit::Vector< int > vEmpty;
   size_t oldSize = v.getSize();
-  size_t oldCap = v.getCapacity();
 
   v.insert(v.begin() + 1, vEmpty.begin(), vEmpty.end());
 
@@ -1413,6 +1413,20 @@ bool testShrinkCapacity()
   return (v.getSize() == 4 && v[0] == 1 && v[1] == 2 && v[2] == 3 && v[3] == 4 && v.getCapacity() == 4);
 }
 
+bool testVectorWithCapacityConstructor()
+{
+  topit::Vector< int > v;
+  v.pushBack(1);
+  v.pushBack(2);
+  v.pushBack(3);
+  v.pushBack(4);
+
+  v.shrinkToFit();
+
+  topit::Vector< int > v2{v, 16};
+  return (v.getSize() == 4 && v[0] == 1 && v[1] == 2 && v[2] == 3 && v[3] == 4 && v.getCapacity() == 4 &&
+          v2.getCapacity() == 16 && v2.getSize() == 4 && v == v2);
+}
 int main()
 {
   using namespace prettyOut;
@@ -1497,6 +1511,7 @@ int main()
       REGISTER_TEST("reserve capacity bigger than now test", testReserveCapacity),
       REGISTER_TEST("reserve capacity lower than now test", testReserveCapacityLower),
       REGISTER_TEST("shrink to fit capacity test", testShrinkCapacity),
+      REGISTER_TEST("constructor vector copy with capacity test", testVectorWithCapacityConstructor),
   };
 
   const size_t count = sizeof(tests) / sizeof(Test::Test);
