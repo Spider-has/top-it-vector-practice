@@ -9,10 +9,6 @@
 
 #include "random_access_iter.hpp"
 
-// homework
-// TODO:: insert erase with iterators по 3 штуки
-// TODO:: + тесты
-
 namespace topit
 {
 
@@ -571,16 +567,21 @@ namespace topit
   }
 
   // TODO:: Домашка сделать резерв и shrink
-  template < class T > void Vector< T >::reserve(size_t size)
+  template < class T > void Vector< T >::reserve(size_t new_cap)
   {
+    if (cap_ < new_cap)
+    {
+      T *new_data = createCopy(data_, data_ + size_, new_cap);
+      delete[] data_;
+      data_ = new_data;
+      cap_ = new_cap;
+    }
   }
 
   void shrinkToFit(size_t size)
   {
   }
 
-  // Лучше вместо end перекидывать size_t c, тогда мы говорим пользователю сразу, что он должен позаботиться о размере
-  // заранее и что это потенциально неээфективная операция
   // template < class T > template < class IT > void Vector< T >::pushBackRange(IT start, size_t c)
   // {
   //   size_t c = 0;
